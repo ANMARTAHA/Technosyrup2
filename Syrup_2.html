@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Smart — Pharmaceutical Syrups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE4CE;
+    --paper-deep:#E2D8BC;
+    --card:#F8F2E2;
+    --ink:#20302A;
+    --ink-soft:#4A5B52;
+    --bottle:#1F4438;
+    --bottle-dark:#153029;
+    --amber:#C6873A;
+    --amber-light:#E3B771;
+    --plum:#6E2A3A;
+    --sage:#7E9689;
+    --correct:#356B45;
+    --wrong:#9C3B3B;
+    --line: rgba(32,48,42,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Fraunces',serif;}
+  .app{min-height:100vh;display:flex;flex-direction:column;}
+
+  /* Masthead */
+  .masthead{
+    background:var(--bottle);
+    color:var(--paper);
+    padding:34px 40px 30px;
+    position:relative;
+    overflow:hidden;
+    border-bottom:6px solid var(--amber);
+  }
+  .masthead::before{
+    content:"";
+    position:absolute;
+    right:-60px;top:-90px;
+    width:260px;height:260px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, rgba(227,183,113,0.35), transparent 70%);
+  }
+  .masthead-inner{position:relative;max-width:1180px;margin:0 auto;}
+  .kicker{
+    font-size:13px;
+    letter-spacing:.04em;
+    color:var(--amber-light);
+    margin:0 0 6px;
+  }
+  .masthead h1{
+    font-size:clamp(34px,5vw,52px);
+    margin:0;
+    font-weight:700;
+    line-height:1.02;
+  }
+  .masthead p{
+    margin:10px 0 0;
+    max-width:560px;
+    color:rgba(236,228,206,0.85);
+    font-size:15.5px;
+    line-height:1.5;
+  }
+
+  /* Layout */
+  .body-wrap{
+    display:flex;
+    flex:1;
+    max-width:1180px;
+    width:100%;
+    margin:0 auto;
+    gap:0;
+  }
+  nav.drawer{
+    width:210px;
+    flex-shrink:0;
+    padding:26px 14px 26px 0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .drawer button{
+    all:unset;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:13px 16px;
+    border-radius:3px 10px 10px 3px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:5px solid var(--sage);
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink-soft);
+    transition:background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .drawer button .num{
+    font-family:'Fraunces',serif;
+    font-size:15px;
+    color:var(--amber);
+    width:18px;
+  }
+  .drawer button:hover{background:#F2EAD3;}
+  .drawer button.active{
+    background:var(--bottle);
+    color:var(--paper);
+    border-left-color:var(--amber);
+  }
+  .drawer button.active .num{color:var(--amber-light);}
+
+  main.stage{
+    flex:1;
+    min-width:0;
+    padding:26px 4px 60px 26px;
+  }
+  .panel{display:none;animation:rise .35s ease;}
+  .panel.active{display:block;}
+  @keyframes rise{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .panel h2{
+    font-size:26px;
+    margin:0 0 4px;
+    color:var(--bottle-dark);
+  }
+  .panel .sub{
+    margin:0 0 26px;
+    color:var(--ink-soft);
+    font-size:14.5px;
+    max-width:640px;
+  }
+
+  /* Overview */
+  .law-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:14px;
+  }
+  .law{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-top:4px solid var(--amber);
+    border-radius:6px;
+    padding:16px 18px;
+  }
+  .law h3{
+    font-size:15px;
+    margin:0 0 6px;
+    color:var(--bottle-dark);
+  }
+  .law p{margin:0;font-size:13.6px;line-height:1.5;color:var(--ink-soft);}
+  .law ul{margin:6px 0 0;padding-left:18px;font-size:13.3px;color:var(--ink-soft);line-height:1.5;}
+
+  /* Diagrams */
+  .diagram-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:20px 22px;
+    margin-bottom:22px;
+  }
+  .diagram-card h3{margin:0 0 12px;font-size:17px;color:var(--bottle-dark);}
+  details.tree{
+    border-left:2px solid var(--line);
+    padding-left:14px;
+    margin:6px 0;
+  }
+  details.tree>summary{
+    cursor:pointer;
+    list-style:none;
+    font-weight:600;
+    padding:7px 10px;
+    border-radius:5px;
+    background:#F1E9D2;
+    border:1px solid var(--line);
+    display:inline-block;
+    font-size:13.8px;
+  }
+  details.tree>summary::-webkit-details-marker{display:none;}
+  details.tree[open]>summary{background:var(--amber-light);}
+  details.tree .leaf{
+    margin:8px 0 10px 4px;
+    font-size:13.2px;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+  .chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+  .chip{
+    background:var(--bottle);
+    color:var(--paper);
+    font-size:12px;
+    padding:4px 10px;
+    border-radius:20px;
+  }
+
+  svg.chart{width:100%;height:auto;overflow:visible;}
+  .chart circle{cursor:pointer;transition:r .12s ease;}
+  .chart circle:hover{r:7;}
+  .readout{
+    margin-top:10px;
+    font-size:13.6px;
+    background:#F1E9D2;
+    border:1px dashed var(--amber);
+    border-radius:6px;
+    padding:8px 12px;
+    color:var(--bottle-dark);
+    min-height:18px;
+  }
+
+  .bar-row{display:flex;align-items:center;gap:10px;margin:7px 0;cursor:pointer;}
+  .bar-label{width:150px;font-size:12.8px;flex-shrink:0;color:var(--ink-soft);}
+  .bar-track{flex:1;background:#E4D9BB;border-radius:4px;height:16px;overflow:hidden;}
+  .bar-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--bottle));border-radius:4px;transition:width .4s ease;}
+  .bar-val{width:52px;text-align:right;font-size:12px;color:var(--ink-soft);flex-shrink:0;}
+  .scale-toggle{
+    all:unset;cursor:pointer;
+    font-size:12.5px;font-weight:600;
+    padding:6px 12px;border-radius:20px;
+    background:var(--bottle);color:var(--paper);
+    margin-bottom:10px;display:inline-block;
+  }
+
+  .flow{display:flex;gap:10px;flex-wrap:wrap;}
+  .flow-step{flex:1;min-width:190px;}
+  .flow-step summary{
+    cursor:pointer;list-style:none;
+    background:var(--bottle);color:var(--paper);
+    padding:10px 14px;border-radius:6px;font-size:13.5px;font-weight:600;
+    position:relative;
+  }
+  .flow-step summary::-webkit-details-marker{display:none;}
+  .flow-step[open] summary{background:var(--amber);color:var(--bottle-dark);}
+  .flow-step p{font-size:12.8px;color:var(--ink-soft);line-height:1.5;padding:10px 2px 0;margin:0;}
+
+  /* Mini map */
+  .mm-wrap{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;}
+  .mm-list{
+    flex:1;min-width:230px;
+    display:flex;flex-direction:column;gap:6px;
+    max-height:520px;overflow:auto;padding-right:6px;
+  }
+  .mm-btn{
+    all:unset;cursor:pointer;
+    padding:9px 13px;
+    font-size:13.3px;font-weight:600;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:4px solid var(--sage);
+    border-radius:3px 8px 8px 3px;
+    color:var(--ink-soft);
+  }
+  .mm-btn.active{background:var(--bottle);color:var(--paper);border-left-color:var(--amber);}
+  .mm-display{
+    flex:1.3;min-width:280px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-top:4px solid var(--amber);
+    border-radius:8px;
+    padding:22px 24px;
+    min-height:260px;
+    position:sticky; top:20px;
+  }
+  .mm-display h3{margin:0 0 10px;font-size:18px;color:var(--bottle-dark);}
+  .mm-display p{font-size:14px;line-height:1.6;color:var(--ink-soft);margin:0;}
+  .mm-placeholder{color:var(--sage);font-size:13.5px;}
+
+  /* Flashcards */
+  .fc-wrap{max-width:560px;}
+  .fc-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:13px;color:var(--ink-soft);}
+  .fc-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    min-height:190px;
+    padding:26px;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    cursor:pointer;
+    position:relative;
+    box-shadow:0 2px 0 var(--line);
+  }
+  .fc-card .tag{
+    position:absolute;top:14px;left:16px;
+    font-size:11px;letter-spacing:.03em;color:var(--amber);font-weight:700;
+  }
+  .fc-card p{font-size:16px;line-height:1.5;margin:0;color:var(--ink);}
+  .fc-card.answer{background:var(--bottle);}
+  .fc-card.answer p{color:var(--paper);}
+  .fc-card.answer .tag{color:var(--amber-light);}
+  .fc-controls{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .btn{
+    all:unset;cursor:pointer;
+    padding:9px 16px;border-radius:20px;
+    font-size:13px;font-weight:600;
+    background:var(--bottle);color:var(--paper);
+  }
+  .btn.ghost{background:transparent;border:1px solid var(--bottle);color:var(--bottle);}
+  .btn:active{transform:translateY(1px);}
+
+  /* Difficulty level selector */
+  .level-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .level-btn{
+    all:unset;cursor:pointer;
+    padding:8px 16px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--ink-soft);
+    font-size:13px;
+    font-weight:600;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .level-btn:hover{border-color:var(--amber);}
+  .level-btn.active{background:var(--bottle);color:var(--paper);border-color:var(--bottle);}
+  .level-btn .dot{
+    display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;
+    background:var(--sage);
+  }
+  .level-btn[data-lvl="1"] .dot{background:#5C9E6B;}
+  .level-btn[data-lvl="2"] .dot{background:var(--amber);}
+  .level-btn[data-lvl="3"] .dot{background:var(--wrong);}
+  .level-btn.active .dot{background:var(--amber-light);}
+
+  /* Quiz */
+  .quiz-wrap{max-width:640px;}
+  .quiz-bar{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);margin-bottom:10px;}
+  .quiz-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:22px 24px;
+  }
+  .quiz-card h3{margin:0 0 16px;font-size:16.5px;line-height:1.4;color:var(--bottle-dark);}
+  .opt{
+    display:block;width:100%;text-align:left;
+    all:unset;cursor:pointer;box-sizing:border-box;
+    padding:11px 14px;margin:7px 0;
+    border:1px solid var(--line);border-radius:6px;
+    font-size:13.8px;color:var(--ink);
+    background:var(--paper);
+    transition:background .12s ease, border-color .12s ease;
+  }
+  .opt:hover{border-color:var(--amber);}
+  .opt.correct{background:rgba(53,107,69,0.16);border-color:var(--correct);color:var(--correct);font-weight:600;}
+  .opt.wrong{background:rgba(156,59,59,0.14);border-color:var(--wrong);color:var(--wrong);font-weight:600;}
+  .opt[disabled]{cursor:default;}
+  .quiz-next{margin-top:16px;}
+  .quiz-done{text-align:center;padding:40px 10px;}
+  .quiz-done .score{font-family:'Fraunces',serif;font-size:44px;color:var(--bottle-dark);}
+
+  footer{
+    text-align:center;
+    padding:22px 20px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    border-top:1px solid var(--line);
+  }
+
+  @media(max-width:820px){
+    .body-wrap{flex-direction:column;}
+    nav.drawer{
+      width:100%;flex-direction:row;flex-wrap:wrap;
+      padding:18px 20px 6px;
+    }
+    .drawer button{flex:1;min-width:130px;justify-content:center;border-left:none;border-bottom:4px solid var(--sage);border-radius:8px 8px 3px 3px;}
+    .drawer button.active{border-bottom-color:var(--amber);}
+    main.stage{padding:20px;}
+    .mm-display{position:static;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .panel{animation:none;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <p class="kicker">Pharmaceutical Technology I — Syrups</p>
+      <h1>Study Smart</h1>
+      <p>Formulation, viscosity builders, preparation methods and sweeteners for pharmaceutical syrups — organised for quick review, practice and recall.</p>
+    </div>
+  </header>
+
+  <div class="body-wrap">
+    <nav class="drawer">
+      <button class="nav-btn active" data-target="overview"><span class="num">1</span>Overview</button>
+      <button class="nav-btn" data-target="diagrams"><span class="num">2</span>Diagrams</button>
+      <button class="nav-btn" data-target="minimap"><span class="num">3</span>Mini Map</button>
+      <button class="nav-btn" data-target="flashcards"><span class="num">4</span>Flash Cards</button>
+      <button class="nav-btn" data-target="quiz"><span class="num">5</span>Quiz Bank</button>
+    </nav>
+
+    <main class="stage">
+
+      <!-- 1. OVERVIEW -->
+      <section id="overview" class="panel active">
+        <h2>Key Rules & Facts</h2>
+        <p class="sub">The essentials only — not the full lecture. Use this as your last-minute review sheet.</p>
+        <div class="law-grid">
+          <div class="law">
+            <h3>Self-preservation rule</h3>
+            <p>An artificial syrup needs sweetness (artificial sweetener), viscosity (viscosity builder), and self-preservation — reached at a 60% concentration.</p>
+          </div>
+          <div class="law">
+            <h3>Viscosity builder families</h3>
+            <p>Glycogenic vs. non-glycogenic. Non-glycogenic splits into natural (tragacanth, acacia), semi-synthetic (Na CMC, HPMC), and polyols (sorbitol, glycerin).</p>
+          </div>
+          <div class="law">
+            <h3>Three incompatibilities</h3>
+            <ul>
+              <li>Anionic polymers ✗ cationic drugs/ingredients</li>
+              <li>Strong dehydrating agents → coagulation of the dispersion</li>
+              <li>Excess alcohol and electrolytes ✗ polymers</li>
+            </ul>
+          </div>
+          <div class="law">
+            <h3>Sorbitol in one line</h3>
+            <p>60% as sweet as sucrose, half the viscosity of simple syrup, no added preservative needed above 60% w/w, laxative in excess, 30% can be added to simple syrup to stop crystallisation.</p>
+          </div>
+          <div class="law">
+            <h3>Heat and inversion</h3>
+            <p>Heat speeds sucrose dissolution but also inverts it — H⁺ acts as catalyst. Overheating caramelises sugar (amber colour) and makes the syrup more prone to fermentation and microbial growth.</p>
+          </div>
+          <div class="law">
+            <h3>No autoclaving</h3>
+            <p>Syrups cannot be sterilised by autoclaving. Use boiled purified water, a permitted preservative, and store in a tight container.</p>
+          </div>
+          <div class="law">
+            <h3>Four preparation methods</h3>
+            <ul>
+              <li>Solution with heat</li>
+              <li>Solution by agitation without heat</li>
+              <li>Addition of sucrose to a medicated liquid</li>
+              <li>Percolation</li>
+            </ul>
+          </div>
+          <div class="law">
+            <h3>Ipecac syrup</h3>
+            <p>Prepared by percolation of powdered ipecac (emetine, cephaeline, psychotrine); glycerin and syrup are added. Used as an emetic, dose 15 mL.</p>
+          </div>
+          <div class="law">
+            <h3>Linctuses</h3>
+            <p>High-sucrose viscous orals for bitter drugs, mainly for cough (soothes inflamed mucosa). Sugar-free versions replace sucrose with sorbitol.</p>
+          </div>
+          <div class="law">
+            <h3>Sweetener watch-outs</h3>
+            <ul>
+              <li>Cyclamate — banned in the USA</li>
+              <li>Aspartame — unstable when heated, PKU warning</li>
+              <li>Sucralose — stable across a broad pH range</li>
+              <li>Acesulfame-K — heat stable</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. DIAGRAMS -->
+      <section id="diagrams" class="panel">
+        <h2>Diagrams</h2>
+        <p class="sub">Click to expand, hover the chart points, or toggle the scale.</p>
+
+        <div class="diagram-card">
+          <h3>Viscosity builder classification</h3>
+          <details class="tree" open>
+            <summary>Viscosity builders</summary>
+            <details class="tree"><summary>Glycogenic</summary><div class="leaf">Sugar-based builders that contribute to viscosity while also being metabolised.</div></details>
+            <details class="tree">
+              <summary>Non-glycogenic</summary>
+              <details class="tree"><summary>Natural</summary><div class="leaf">Tragacanth, acacia<div class="chip-row"><span class="chip">Tragacanth</span><span class="chip">Acacia</span></div></div></details>
+              <details class="tree"><summary>Semi-synthetic</summary><div class="leaf">Na CMC, HPMC<div class="chip-row"><span class="chip">Na CMC</span><span class="chip">HPMC</span></div></div></details>
+              <details class="tree"><summary>Polyols</summary><div class="leaf">Sorbitol, glycerin<div class="chip-row"><span class="chip">Sorbitol</span><span class="chip">Glycerin</span></div></div></details>
+            </details>
+          </details>
+        </div>
+
+        <div class="diagram-card">
+          <h3>Solubility of sucrose in water vs. temperature</h3>
+          <svg class="chart" viewBox="0 0 620 300" id="solChart">
+            <!-- axes -->
+            <line x1="55" y1="20" x2="55" y2="260" stroke="#20302A" stroke-opacity="0.4"/>
+            <line x1="55" y1="260" x2="600" y2="260" stroke="#20302A" stroke-opacity="0.4"/>
+            <text x="30" y="15" font-size="11" fill="#4A5B52">g/mL</text>
+            <text x="560" y="278" font-size="11" fill="#4A5B52">°C</text>
+          </svg>
+          <div class="readout" id="solReadout">Click a point on the line to read its value.</div>
+        </div>
+
+        <div class="diagram-card">
+          <h3>Sweetener potency (relative to sucrose = 1)</h3>
+          <button class="scale-toggle" id="scaleToggle">Switch to linear scale</button>
+          <div id="barChart"></div>
+          <div class="readout" id="barReadout">Click a sweetener to see its comment.</div>
+        </div>
+
+        <div class="diagram-card">
+          <h3>Four ways to prepare a syrup</h3>
+          <div class="flow">
+            <details class="flow-step"><summary>1 · Solution with heat</summary><p>Sugar dissolved in water with heat; heat-stable extras added hot, then cooled. Volatile/heat-labile agents added after cooling.</p></details>
+            <details class="flow-step"><summary>2 · Agitation, no heat</summary><p>Sugar dissolved by agitation alone in an oversized vessel — slower, but colourless and maximally stable.</p></details>
+            <details class="flow-step"><summary>3 · Sucrose + medicated liquid</summary><p>Sucrose is added to an existing tincture/fluidextract or flavoured liquid (e.g. cherry, orange syrup).</p></details>
+            <details class="flow-step"><summary>4 · Percolation</summary><p>Sucrose or the drug source is percolated; when a drug extractive is used, extraction and syrup-making are two separate steps (e.g. ipecac syrup).</p></details>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. MINI MAP -->
+      <section id="minimap" class="panel">
+        <h2>Mini Map</h2>
+        <p class="sub">Pick a title to read it on the right.</p>
+        <div class="mm-wrap">
+          <div class="mm-list" id="mmList"></div>
+          <div class="mm-display" id="mmDisplay">
+            <p class="mm-placeholder">Select a title from the list to display its notes here.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. FLASH CARDS -->
+      <section id="flashcards" class="panel">
+        <h2>Flash Cards</h2>
+        <p class="sub">Click the card to flip it. Choose a difficulty level to begin.</p>
+        <div class="level-row" id="fcLevelRow">
+          <button class="level-btn active" data-lvl="1"><span class="dot"></span>Level 1 — Easy (60)</button>
+          <button class="level-btn" data-lvl="2"><span class="dot"></span>Level 2 — Medium (50)</button>
+          <button class="level-btn" data-lvl="3"><span class="dot"></span>Level 3 — Hard (40)</button>
+        </div>
+        <div class="fc-wrap">
+          <div class="fc-bar">
+            <span id="fcCount">Card 1 of 60</span>
+            <span id="fcSide">Question — click to flip</span>
+          </div>
+          <div class="fc-card" id="fcCard">
+            <span class="tag">Q</span>
+            <p id="fcText"></p>
+          </div>
+          <div class="fc-controls">
+            <button class="btn ghost" id="fcPrev">← Previous</button>
+            <button class="btn" id="fcNext">Next →</button>
+            <button class="btn ghost" id="fcShuffle">Shuffle</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. QUIZ BANK -->
+      <section id="quiz" class="panel">
+        <h2>Quiz Bank</h2>
+        <p class="sub">Choose a difficulty level · answer choices are shuffled.</p>
+        <div class="level-row" id="qLevelRow">
+          <button class="level-btn active" data-lvl="1"><span class="dot"></span>Level 1 — Easy (60)</button>
+          <button class="level-btn" data-lvl="2"><span class="dot"></span>Level 2 — Medium (50)</button>
+          <button class="level-btn" data-lvl="3"><span class="dot"></span>Level 3 — Hard (40)</button>
+        </div>
+        <div class="quiz-wrap">
+          <div class="quiz-bar">
+            <span id="qCount">Question 1 of 60</span>
+            <span id="qScore">Score: 0</span>
+          </div>
+          <div class="quiz-card" id="quizCard"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer>© Anmar Taha</footer>
+</div>
+
+<script>
+/* ---------- NAV ---------- */
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.target).classList.add('active');
+  });
+});
+
+/* ---------- SOLUBILITY CHART ---------- */
+const solData=[
+  [50,2.59],[55,2.73],[60,2.89],[65,3.06],[70,3.25],
+  [75,3.46],[80,3.69],[85,3.94],[90,4.20]
+];
+const chart=document.getElementById('solChart');
+function sx(t){return 55+((t-50)/(90-50))*(600-55);}
+function sy(s){return 260-((s-2.4)/(4.3-2.4))*(260-20);}
+let pathD='';
+solData.forEach((p,i)=>{
+  const x=sx(p[0]), y=sy(p[1]);
+  pathD+=(i===0?'M':'L')+x+' '+y+' ';
+});
+const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+path.setAttribute('d',pathD);
+path.setAttribute('fill','none');
+path.setAttribute('stroke','#C6873A');
+path.setAttribute('stroke-width','2.5');
+chart.appendChild(path);
+solData.forEach(p=>{
+  const x=sx(p[0]), y=sy(p[1]);
+  const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',5);
+  c.setAttribute('fill','#1F4438');
+  c.addEventListener('click',()=>{
+    document.getElementById('solReadout').textContent =
+      'At '+p[0]+'°C, sucrose solubility ≈ '+p[1].toFixed(2)+' g/mL.';
+  });
+  chart.appendChild(c);
+  const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+  lbl.setAttribute('x',x-8); lbl.setAttribute('y',275);
+  lbl.setAttribute('font-size','10'); lbl.setAttribute('fill','#4A5B52');
+  lbl.textContent=p[0];
+  chart.appendChild(lbl);
+});
+
+/* ---------- SWEETENER BAR CHART ---------- */
+const sweeteners=[
+  {name:'Neotame',val:8000,comment:'≈8000× as sweet as sucrose (Nutrasweet®).'},
+  {name:'Sucralose',val:600,comment:'≈600×; stable over a broad pH range (Splenda®).'},
+  {name:'Saccharin',val:500,comment:'≈500×; has a bitter aftertaste (Sweet\'N Low®).'},
+  {name:'Stevia',val:250,comment:'≈250×; mainly rebaudioside A, a steviol glycoside (Truvia®, Pure Via®, Rebiana).'},
+  {name:'Aspartame',val:200,comment:'≈200×; unstable in hot solution; PKU warning (Canderel®).'},
+  {name:'Acesulfame-K',val:200,comment:'≈200×; heat stable (Nutrinova®).'},
+  {name:'Sodium cyclamate',val:30,comment:'≈30×; banned in the USA.'},
+  {name:'Xylitol',val:1.0,comment:'≈1× — about as sweet as sucrose.'},
+  {name:'Sorbitol',val:0.6,comment:'≈0.6× — used as a diabetic-friendly sucrose substitute.'},
+  {name:'Mannitol',val:0.5,comment:'≈0.5×; derived from mannose.'}
+];
+let logScale=true;
+function renderBars(){
+  const box=document.getElementById('barChart');
+  box.innerHTML='';
+  const vals=sweeteners.map(s=>s.val);
+  const min=Math.min(...vals), max=Math.max(...vals);
+  sweeteners.slice().sort((a,b)=>b.val-a.val).forEach(s=>{
+    let pct;
+    if(logScale){
+      pct=((Math.log10(s.val)-Math.log10(min))/(Math.log10(max)-Math.log10(min)))*100;
+    }else{
+      pct=(s.val/max)*100;
+    }
+    pct=Math.max(pct,3);
+    const row=document.createElement('div');
+    row.className='bar-row';
+    row.innerHTML='<span class="bar-label">'+s.name+'</span>'+
+      '<span class="bar-track"><span class="bar-fill" style="width:'+pct+'%"></span></span>'+
+      '<span class="bar-val">'+s.val+'×</span>';
+    row.addEventListener('click',()=>{
+      document.getElementById('barReadout').textContent=s.name+' — '+s.comment;
+    });
+    box.appendChild(row);
+  });
+}
+renderBars();
+document.getElementById('scaleToggle').addEventListener('click',(e)=>{
+  logScale=!logScale;
+  e.target.textContent = logScale ? 'Switch to linear scale' : 'Switch to log scale';
+  renderBars();
+});
+
+/* ---------- MINI MAP ---------- */
+const mm=[
+  {t:'Artificial Syrups',x:'Diabetic, non-nutritive and sugar-free syrups must combine sweetness (artificial sweetener), viscosity (viscosity builder) and self-preservation at 60%. Example formula: Sodium CMC 1.5% (viscosity builder), saccharin q.s. (sweetener), methylparaben q.s. (preservative), purified water to 100 mL.'},
+  {t:'Viscosity Builders',x:'Split into glycogenic and non-glycogenic. Non-glycogenic builders are natural (tragacanth, acacia), semi-synthetic (Na CMC, HPMC), or polyols (sorbitol, glycerin).'},
+  {t:'Special Precautions',x:'1) Anionic polymers are incompatible with cationic drugs or other formulation ingredients. 2) Strong dehydrating agents coagulate aqueous dispersions of natural or semi-synthetic polymers. 3) Incompatible with excess alcohol and electrolytes.'},
+  {t:'Tragacanth',x:'A naturally occurring dried gum — a mixture of water-insoluble bassorin and water-soluble tragacanthin. Hydrolysis of tragacanthin yields L-arabinose, L-fucose, D-xylose, D-galactose and D-galacturonic acid.'},
+  {t:'Acacia',x:'A complex, loose aggregate of sugars and hemicelluloses. Consists of an Arabic acid nucleus connected to calcium, magnesium and potassium, along with the sugars arabinose, galactose and rhamnose.'},
+  {t:'Sorbitol',x:'A hexahydric alcohol (C6H14O6) made by glucose hydrogenation. Crystalline, white, colourless and non-volatile. A 70% w/w saturated solution substitutes for sucrose and is used for diabetic patients.'},
+  {t:'Sorbitol Properties',x:'Used in non-nutritive syrups for diabetics (no hyperglycemia); no dental caries; 60% as sweet as sucrose; good taste; no preservative needed above 60% w/w; chemically stable; absorbed from the GIT more slowly than sucrose; not irritating to mouth/throat; laxative in large amounts; half the viscosity of simple syrup; compatible with other polyols; 30% can be added to simple syrup to reduce crystallisation; prevents bottle-cap sticking seen with high sucrose concentrations.'},
+  {t:'Preparation Methods — Overview',x:'Syrups are prepared by one of four general methods: solution with heat, solution by agitation without heat, addition of sucrose to a prepared medicated liquid, or percolation. A syrup may combine more than one method; many official syrups have no fixed method.'},
+  {t:'Solution with Heat',x:'Used for rapid preparation when ingredients are not damaged or volatilised by heat. Sugar is dissolved in purified water with heat; other heat-stable components are added hot, then the mixture cools; volume is adjusted with purified water. Heat-labile or volatile agents (oils, alcohol) are added after the sugar dissolves, then the syrup is cooled rapidly.'},
+  {t:'Sucrose Inversion & Overheating',x:'Heat speeds dissolution but almost always inverts some sucrose; the reaction is catalysed by hydrogen ions from acids. Greatly overheated syrup turns amber as sucrose caramelises, making it more prone to fermentation and microbial growth.'},
+  {t:'Sterilization & Storage',x:'Because of decomposition risk, syrups cannot be sterilised by autoclaving. Using boiled purified water improves permanency; permitted preservatives protect shelf life; all syrups must be stored in a tight container.'},
+  {t:'Solubility of Sucrose Table',x:'Sucrose solubility rises with temperature: 2.59 g/mL at 50°C up to 4.20 g/mL at 90°C, increasing steadily at each 5°C interval in between.'},
+  {t:'Solution by Agitation without Heat',x:'Avoids heat-induced inversion; syrup made this way is practically colourless. On a small scale, ingredients dissolve by agitation in a vessel larger than the final syrup volume — slower than heating, but gives maximum stability. Sometimes a non-medicated syrup (e.g. glycyrrhiza/licorice syrup) is used as the vehicle instead of sucrose.'},
+  {t:'Adding Solids to Syrup',x:'Solid agents are best dissolved in a minimal amount of purified water first, then incorporated. Added directly, they dissolve slowly because syrup\'s viscosity limits distribution and concentrated syrups have little free water.'},
+  {t:'Antihistamine Syrup Example',x:'Chlorpheniramine maleate 0.4 g, glycerin 25 mL, syrup 83 mL, sorbitol solution 282 mL, sodium benzoate 1 g, alcohol 60 mL, colour and flavour q.s., purified water to 1000 mL.'},
+  {t:'Addition of Sucrose to a Medicated Liquid',x:'A tincture or fluidextract (often alcohol-soluble, in a hydroalcoholic vehicle) may serve as the medication source. Desired alcohol-soluble agents are rendered water soluble; undesirable ones are removed by mixing with water, letting insolubles separate, and filtering — the filtrate is then combined with sucrose. Examples: cherry, roseberry, orange and tolu balsam syrups.'},
+  {t:'Percolation Method',x:'Either the sucrose itself is percolated to make the syrup, or the medicinal source is percolated to form an extractive to which sucrose or syrup is added — the latter being two separate procedures: preparing the drug extractive, then preparing the syrup.'},
+  {t:'Ipecac Syrup',x:'Made by adding glycerin and syrup to an extractive of powdered ipecac obtained by percolation. Ipecac is the dried rhizome and roots of Cephaëlis ipecacuanha, containing the alkaloids emetine, cephaeline and psychotrine, extracted with a hydroalcoholic solvent. Classed as an emetic; usual dose 15 mL.'},
+  {t:'Linctuses',x:'Viscous oral preparations with a therapeutic agent in a vehicle high in sucrose (or honey/glucose syrup), often chosen when the drug tastes bitter. Used mainly for cough, soothing inflamed mucous membranes. Sugar-free versions replace sucrose with sorbitol.'},
+  {t:'Synthetic Sweeteners',x:'Saccharin (Sweet\'N Low®) ≈500×, bitter aftertaste. Sodium cyclamate ≈30×, banned in the USA. Aspartame (Canderel®) ≈200×, unstable in hot solution, PKU warning. Neotame (Nutrasweet®) ≈8000×. Sucralose (Splenda®) ≈600×, stable over a broad pH range. Acesulfame-K (Nutrinova®) ≈200×, heat stable.'},
+  {t:'Natural Sweeteners',x:'Stevia ≈250×, extracts known as rebiana, Truvia® and Pure Via®, mainly rebaudioside A (a steviol glycoside). Sorbitol ≈0.6×. Xylitol ≈1.0×. Mannitol ≈0.5×, derived from mannose.'}
+];
+const mmList=document.getElementById('mmList');
+const mmDisplay=document.getElementById('mmDisplay');
+mm.forEach((item,i)=>{
+  const b=document.createElement('button');
+  b.className='mm-btn';
+  b.textContent=item.t;
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.mm-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    mmDisplay.innerHTML='<h3>'+item.t+'</h3><p>'+item.x+'</p>';
+  });
+  mmList.appendChild(b);
+});
+
+/* ---------- FLASHCARDS ---------- */
+const fcCardsL1 = [["What three properties must artificial (diabetic) syrups have?", "Sweetness (artificial sweetener), viscosity (viscosity builder), and self-preservation at 60%."], ["In the diabetic syrup formula, what percentage of Sodium CMC is used?", "1.5% (medium viscosity)."], ["What is the role of saccharin in the diabetic syrup formula?", "Sweetening agent (q.s.)."], ["What preservative is used in the diabetic syrup formula?", "Methyl paraben."], ["What is the final volume of purified water in the diabetic syrup formula?", "100 mL."], ["Into what two categories are viscosity builders divided?", "Glycogenic and non-glycogenic."], ["What are the three subtypes of non-glycogenic viscosity builders?", "Natural, semi-synthetic, and polyols."], ["Give two examples of natural viscosity builders.", "Tragacanth and acacia."], ["Give two examples of semi-synthetic viscosity builders.", "Sodium CMC and HPMC."], ["Give two examples of polyol viscosity builders.", "Sorbitol and glycerin."], ["Why are anionic polymers a formulation concern?", "They are incompatible with cationic drugs or other formulation ingredients."], ["What happens when strong dehydrating agents are added to natural/semisynthetic polymer dispersions?", "They cause coagulation of the aqueous dispersion."], ["With what two substances are viscosity-builder polymers incompatible in excess?", "Alcohol and electrolytes."], ["What is tragacanth?", "A naturally occurring dried gum — a mixture of water-insoluble and water-soluble polysaccharides."], ["What is the water-insoluble portion of tragacanth called?", "Bassorin."], ["What is the water-soluble portion of tragacanth called?", "Tragacanthin."], ["What sugars does hydrolysis of tragacanthin yield?", "L-arabinose, L-fucose, D-xylose, D-galactose, and D-galacturonic acid."], ["What is acacia gum structurally?", "A complex, loose aggregate of sugars and hemicelluloses."], ["What forms the nucleus of the acacia aggregate, and what is it bound to?", "An Arabic acid nucleus connected to calcium, magnesium, and potassium."], ["Which sugars are attached to acacia's Arabic acid nucleus?", "Arabinose, galactose, and rhamnose."], ["What is sorbitol chemically?", "A hexahydric alcohol (C6H14O6) formed by glucose hydrogenation."], ["Describe crystalline sorbitol's appearance.", "White, colourless, and non-volatile."], ["At what concentration is sorbitol solution saturated, and what is it used for?", "70% w/w; used as a sucrose substitute for diabetic patients."], ["Does sorbitol cause hyperglycemia?", "No — it does not cause hyperglycemia, which is why it's used in non-nutritive diabetic syrups."], ["Does sorbitol cause dental caries?", "No."], ["How sweet is sorbitol compared to sucrose?", "60% as sweet as sucrose."], ["At what concentration does sorbitol not require an added preservative?", "Above 60% (w/w)."], ["Is sorbitol absorbed from the GI tract as fast as sucrose?", "No, it is absorbed more slowly."], ["What effect can large quantities of sorbitol have?", "A laxative effect."], ["How does sorbitol's viscosity compare to simple syrup?", "It has half the viscosity of simple syrup."], ["What percentage of sorbitol can be added to simple syrup to reduce crystallization?", "30%."], ["What packaging problem does sorbitol help prevent?", "Sticking or locking of bottle caps that occurs with high sucrose concentrations."], ["What are the four general methods of preparing syrups?", "Solution with heat, solution by agitation without heat, addition of sucrose to a prepared medicated liquid, and percolation."], ["When is the 'solution with heat' method used?", "When rapid preparation is desired and the components are not damaged or volatilized by heat."], ["In the hot process, what is done first?", "Sugar is added to purified water and heat is applied until dissolved."], ["When are heat-labile or volatile substances added in the hot process?", "After the sugar is dissolved, followed by rapid cooling to room temperature."], ["What happens to sucrose when heat is applied, especially with acids present?", "Inversion of sucrose occurs, catalyzed by the hydrogen ion."], ["What happens if a syrup is greatly overheated?", "It becomes amber coloured as the sucrose caramelizes."], ["Are decomposed (overheated) syrups more or less susceptible to microbial growth?", "More susceptible to fermentation and microbial growth."], ["Can syrups be sterilized by autoclaving?", "No, because of the risk of heat decomposition."], ["What two measures help protect a syrup's stability and shelf life?", "Using boiled purified water and adding a permitted preservative."], ["How should syrups be stored?", "In a tight container."], ["At 60°C, what is the solubility of sucrose in water?", "2.89 g/mL."], ["At 90°C, what is the solubility of sucrose in water?", "4.20 g/mL."], ["At 50°C, what is the solubility of sucrose in water?", "2.59 g/mL."], ["At 75°C, what is the solubility of sucrose in water?", "3.46 g/mL."], ["Why is agitation without heat used to prepare syrup?", "To avoid heat-induced inversion of sucrose."], ["What colour is syrup made without heat?", "Practically colourless."], ["What vessel size is recommended for small-scale cold preparation?", "A vessel larger than the final volume of syrup, to allow thorough agitation."], ["Which is more time-consuming — the hot or cold process — and which gives greater stability?", "The cold (agitation) process is more time-consuming but gives maximum stability."], ["Give an example of a syrup that uses simple/non-medicated syrup as the vehicle instead of sucrose.", "Glycyrrhiza (licorice) syrup."], ["Why is it best to pre-dissolve solid agents before adding them to a syrup?", "Because the viscous nature of syrup and limited available water make direct dissolution slow."], ["In the antihistamine syrup formula, what is the active ingredient and its amount?", "Chlorpheniramine maleate, 0.4 g."], ["In the antihistamine syrup formula, how much alcohol is used?", "60.0 mL."], ["In the antihistamine syrup formula, what preservative is used?", "Sodium benzoate."], ["In the antihistamine syrup formula, how much glycerin is used?", "25.0 mL."], ["In the antihistamine syrup formula, how much sorbitol solution is used?", "282.0 mL."], ["What kind of medicated liquid is commonly used as the medication source before adding sucrose?", "A tincture or fluidextract."], ["Name two syrups prepared by adding sucrose to a medicated liquid.", "Cherry syrup and orange syrup (also roseberry and tolu balsam syrup)."], ["In the percolation method, what two things may be percolated?", "Either the sucrose itself, or the source of the medicinal component."]];
+const fcCardsL2 = [["Compare tragacanth's soluble and insoluble portions by name and solubility.", "Bassorin is the main water-insoluble portion, while tragacanthin is the water-soluble material."], ["Why can't syrups be autoclaved even though heat helps dissolve sugar quickly?", "Because excessive heat (as in autoclaving) causes sucrose inversion/decomposition (caramelization); boiled purified water and preservatives are used instead of high-heat sterilization."], ["What is the relationship between acidity and the speed of sucrose inversion during heating?", "The presence of acids greatly increases the speed of inversion, with the hydrogen ion acting as a catalyst."], ["How much does sucrose solubility increase (approximately) from 50°C to 90°C?", "From 2.59 to 4.20 g/mL, an increase of about 1.6 g/mL."], ["What is the difference between the 'solution with heat' and 'agitation without heat' methods in terms of color and stability?", "Heat-prepared syrup can turn amber if overheated, while cold-agitation syrup is practically colorless; the cold method is slower but more stable."], ["Why are natural/semi-synthetic polymer dispersions sensitive to both dehydrating agents and electrolytes?", "Because strong dehydrating agents cause coagulation of the aqueous dispersion, and excess electrolytes (or alcohol) also disrupt the stability of the viscous dispersion."], ["What is the difference between the sugar sources in tragacanth versus acacia?", "Tragacanthin hydrolyzes into L-arabinose, L-fucose, D-xylose, D-galactose, and D-galacturonic acid, while the acacia aggregate is built around an Arabic acid nucleus linked to arabinose, galactose, and rhamnose."], ["Why is a vessel larger than the final syrup volume preferred for small-scale cold preparation?", "To allow thorough, complete agitation of the ingredients without spilling, since the method relies solely on agitation (no heat) to dissolve the sucrose."], ["How does the ipecac extraction method differ from cherry syrup preparation in terms of number of steps?", "Ipecac syrup requires two separate procedures (extractive preparation by percolation, then syrup preparation), while cherry syrup simply involves adding sucrose to an already-prepared medicated liquid (tincture/fluidextract)."], ["Why are undesirable alcohol-soluble components removed from tinctures before preparing the syrup?", "Because they are not the desired medicinal components, so they are removed by mixing the tincture/fluidextract with water, letting it stand for separation, then filtering out the water-insoluble material."], ["What is the relationship between sorbitol's viscosity and the percentage added to simple syrup?", "Although sorbitol has only half the viscosity of simple syrup, up to 30% can be added to simple syrup to reduce crystallization without greatly affecting overall viscosity."], ["How does saccharin's role differ from sodium CMC's role in the diabetic syrup formula?", "Sodium CMC (1.5%) acts as a viscosity builder to give body, while saccharin (q.s.) acts as a sweetening agent replacing sugar."], ["Why does cold-agitation preparation take longer despite giving better stability?", "Because dissolution relies solely on mechanical agitation without heat to speed it up, but the absence of heat prevents sucrose inversion and thus preserves stability."], ["How is it determined whether alcohol-soluble tincture components are 'desired' or not when preparing a syrup?", "If they are the desired medicinal agents, they are rendered water-soluble; if they are unnecessary components of the corresponding syrup, they are removed by filtering after mixing with water."], ["What is the link between sorbitol concentration (above 60%) and not needing a preservative?", "At high concentration (above 60% w/w), sorbitol becomes self-preserving, similar to sucrose's self-preservation principle at 60%, preventing microbial growth without an added preservative."], ["Compare the sweetness degree of aspartame and acesulfame-K and note a similarity.", "Both have a sweetness degree of 200× sucrose, but differ in stability: aspartame is unstable in hot solution while acesulfame-K is heat stable."], ["Why is sorbitol a suitable choice for linctuses intended for diabetic patients?", "Because it is a sucrose substitute that doesn't cause hyperglycemia or dental caries, while maintaining the viscous consistency linctuses need to soothe mucous membranes."], ["What is the functional difference between glycerin and sorbitol solution in the antihistamine syrup formula?", "Glycerin (25 mL) is used in a smaller amount as a co-solvent/humectant, while sorbitol solution (282 mL) forms the larger portion of the sweet, viscous vehicle replacing sucrose."], ["Why is glycyrrhiza (licorice) syrup a different example among syrup preparation methods?", "Because it uses simple or non-medicated syrup (rather than sucrose directly) as the sweetening agent and vehicle, with other miscible/soluble liquids mixed into it."], ["What is the relationship between the limited available water in concentrated syrups and the dissolution speed of directly added solids?", "The viscous nature prevents the solid from distributing readily, and the limited available water in the concentrated syrup further slows dissolution, which is why solids should be pre-dissolved in a small amount of water first."], ["What is the similarity between 'addition of sucrose to a medicated liquid' and 'percolation' in preparing certain syrups?", "Both methods depend on preparing the medicinal liquid source (whether via percolation or as a ready tincture/fluidextract) before combining it with sucrose or syrup to form the final product."], ["What is the difference between anionic polymers and polyols regarding drug compatibility?", "Anionic polymers (like sodium CMC) may adversely interact with cationic drugs, whereas polyols (like sorbitol) are generally compatible with other polyols and don't carry the same ionic restrictions."], ["Why do some syrups need more than one preparation method?", "Because the choice of method depends on the physical and chemical characteristics of the ingredients, and multiple methods may be combined according to the pharmacist's preference when no official method is specified."], ["How do you explain stevia being 'natural' while aspartame and saccharin are 'synthetic', despite similar use?", "Stevia is plant-derived (its source is rebaudioside A, a natural steviol glycoside), while aspartame and saccharin are synthesized chemical compounds; this source difference is the basis for classification despite all being used as sucrose-replacing sweeteners."], ["What is the relationship between sorbitol's sweetness degree (0.6) and its dual use as a viscosity builder/bulk substitute?", "Because its sweetness is lower than sucrose (60%), it may not provide enough sweetness alone, but it compensates through its dual role as a viscosity builder (polyol) and bulking agent that maintains syrup body without raising blood sugar."], ["What is the difference between 'self-preservation' in simple syrup and the need for a preservative in the antihistamine syrup formula despite containing sorbitol and alcohol?", "Despite containing sorbitol and alcohol (60 mL), the overall concentration and other aqueous components still require adding sodium benzoate as an extra preservative to ensure long-term microbial stability."], ["Why is percolating powdered ipecac with a hydroalcoholic solvent (not water alone) a necessary step?", "Because the active alkaloids (emetine, cephaeline, psychotrine) require a hydroalcoholic solvent for efficient extraction from the dried rhizome and roots."], ["What is the key difference between linctuses and ordinary syrups in terms of therapeutic purpose?", "Linctuses are primarily intended for treating cough via a local soothing effect on mucous membranes, while ordinary syrups may carry any medicinal agent without this specific local purpose."], ["What is the difference between using sodium benzoate in the antihistamine syrup and methylparaben in the diabetic syrup as preservatives?", "Both are added preservatives, but the choice depends on compatibility with each formula's other ingredients (e.g., alcohol presence in the antihistamine syrup vs. a simple aqueous formula in the diabetic syrup); both aim to prevent microbial growth regardless of vehicle type."], ["How does the concept of 'natural vs. semi-synthetic' viscosity builders relate to their chemical origin?", "Natural ones (tragacanth, acacia) originate directly from plant gums without major chemical modification, while semi-synthetic ones (Na CMC, HPMC) are derivatives of natural cellulose after chemical processing — hence 'half natural, half synthesized'."], ["Why does the text state that many official syrups have 'no officially designated method of preparation'? What is the practical implication?", "Because the choice of method depends on the properties of the ingredients and the pharmacist's preference, not a strict rule; practically, this means the pharmacist has flexibility to choose the most suitable method (heat, agitation, addition to a medicated liquid, or percolation) as long as final product quality and stability are maintained."], ["What is the alcohol's potential dual role in the antihistamine syrup formula (60 mL)?", "It acts as a co-solvent for certain components and may partially contribute to a preservative effect, although sodium benzoate is the explicitly stated primary preservative in the formula."], ["How do you explain having both syrup (83 mL) and sorbitol solution (282 mL) together in one formula despite both being sweet vehicles?", "Combining both balances their properties: syrup (sucrose) gives traditional sweetness and body, while the larger sorbitol amount reduces overall sucrose content, making the formula partly more suitable for certain patients or improving crystallization stability and overall body."], ["What is the difference in purpose between using sorbitol in the diabetic syrup (Rx) formula versus the antihistamine syrup formula?", "In the diabetic (Rx) formula, sorbitol isn't explicitly listed (sodium CMC is the viscosity builder used), while in the antihistamine syrup, sorbitol solution serves as a main sweet vehicle partly replacing sucrose; this shows sorbitol can serve as a sweetening substitute in one formula and a body/vehicle component in another context."], ["How do you connect 'coagulation from strong dehydrating agents' and 'incompatibility with excessive alcohol' as two different causes of viscosity-builder degradation?", "Both withdraw water from around the dispersed polymer particles, causing it to lose stability and coagulate or precipitate; the difference is that a dehydrating agent directly removes water, while excess alcohol reduces the aqueous medium's polarity, reducing water's ability to hydrate and dissolve the polymer, reaching the same result (loss of stability) via a partially different mechanism."], ["What is the relationship between stevia's sweetness degree (250) and sorbitol's (0.6), and the importance of sometimes combining them in one formula?", "Stevia is very sweet and used in tiny amounts to achieve the desired sweetness, while sorbitol is relatively weakly sweet and used in larger amounts, providing body and bulk; combining them merges high sweetness from a small amount (stevia) with suitable body/bulk from a larger amount (sorbitol), balancing taste and texture without relying entirely on sucrose."], ["Why is the 'standing then filtering' step essential when removing unwanted components from a tincture before preparing a syrup?", "Standing allows complete separation of the water-insoluble components (previously alcohol-soluble) so they settle or separate clearly, making subsequent filtration effective in fully removing them; otherwise, some may remain suspended in the liquid, affecting the clarity and purity of the final syrup."], ["How do you compare the importance of 'a vessel larger than the syrup volume' in cold preparation versus 'rapid cooling' in hot preparation?", "Both are practical measures aimed at protecting product quality during preparation: the larger vessel allows effective agitation without spilling to ensure complete dissolution without heat, while rapid cooling after heat-dissolving the sugar minimizes heat-sensitive components' exposure time; one is a mechanical measure (mixing), the other thermal (cooling)."], ["Discuss why ipecac syrup is described as a 'composite' example combining both percolation and direct addition methods.", "First, the medicinal component (alkaloids) is extracted from the crude powder by percolation to produce an extractive, then in a second separate step glycerin and syrup are added directly to this extractive to produce the final syrup; it combines extraction technique (percolation) with direct combination technique (as in adding sucrose/syrup to a medicated liquid), making it a hybrid rather than a single pure method."], ["What are the similarities and differences between glycyrrhiza syrup and cherry syrup regarding the vehicle used?", "Similarity: both use a ready-made sweet liquid as a vehicle rather than dissolving sucrose from scratch; difference: glycyrrhiza syrup uses simple/non-medicated syrup as the primary vehicle to which other miscible liquids are added, while cherry syrup is prepared by adding sucrose to an already medicated liquid (like cherry tincture) — meaning the order of adding sucrose/syrup differs between the two methods."], ["Why is defining the 'sweetness degree' for each sweetener (like 500 for saccharin or 8000 for neotame) more of a practical figure than a theoretical number?", "Because it determines the actual amount of sweetener needed to achieve the same sweetness as a given amount of sucrose, directly affecting the substance's bulk/weight in the formula, its cost, and its potential effect on body, taste, or compatibility with other ingredients — it is a figure used directly in pharmaceutical formulation calculations."], ["How does the principle of 'limited water in concentrated syrups' explain the preference for dissolving solids in separate water first?", "A concentrated syrup already has a relatively low free-water fraction because most of the volume is occupied by dissolved sugar, so a directly added solid finds little free water to dissolve in, dissolving very slowly; by pre-dissolving it separately in a sufficient amount of water, complete dissolution is ensured before combining it with the viscous syrup."], ["What is the practical difference between a substance being 'self-preserving' at a certain concentration and needing an added preservative at a lower concentration? Relate this to sucrose and sorbitol.", "In both cases (sucrose at 60%, sorbitol above 60% w/w), the high concentration is sufficient to lower water activity enough to prevent microbial growth without additives; at lower concentrations, enough free water remains to support microbial growth, making preservative addition necessary to protect the product — making the critical concentration a practical turning point in the preservative decision."], ["Compare the function of the 'vehicle' in glycyrrhiza syrup with the function of alcohol as a 'co-solvent' in the antihistamine syrup.", "The vehicle in glycyrrhiza syrup (simple/non-medicated syrup) carries the bulk of the formula and provides the primary sweetness and body to which other liquids are added; alcohol in the antihistamine syrup is used in a relatively smaller amount (60 mL out of 1000) to help dissolve or stabilize certain components without being the main vehicle for sweetness or bulk."], ["How do you connect 'inability to autoclave' with the importance of using pre-boiled purified water?", "Since high-heat sterilization (autoclaving) damages syrup via inversion and caramelization, it's replaced by reducing the initial microbial load using pre-boiled purified water (relatively microbe-free) instead of final high-heat sterilization of the whole product — an alternative protective strategy preserving chemical quality while improving microbial safety."], ["Why can choosing a syrup preparation method be called a 'multi-factor decision' rather than one based on a single factor?", "Because the choice depends on several combined factors: ingredient heat sensitivity, available preparation time, required stability degree, the nature of the medicinal component source (tincture, extract, crude powder), and how well components mix with water; this multiplicity explains why there's no single 'correct' method for every syrup, and multiple methods may be combined as needed."], ["What is the logical similarity between 'semi-synthetic viscosity builders' and 'synthetic sweeteners' regarding their relationship to a natural source?", "Semi-synthetic viscosity builders (Na CMC, HPMC) are chemically derived from an original natural material (cellulose), while synthetic sweeteners (like aspartame) are often fully synthesized chemical compounds without a direct natural source like stevia; the key difference is that 'semi-synthetic' retains a chemically modified natural origin, while 'fully synthetic' is built from scratch chemically without a direct plant-source link."], ["How does the importance of 'filtering out unwanted components' in syrup preparation compare to 'choosing a sweetener that doesn't precipitate with cationic drugs'?", "Both are measures to ensure the final formula's purity and compatibility: filtration physically removes unwanted components already present in the source (tincture), while choosing a compatible sweetener or viscosity builder prevents a chemical interaction problem (like ionic incompatibility) from occurring in the first place; the first is a post-hoc correction (after preparation), the second is proactive prevention (during design)."], ["Discuss why both glycerin and sorbitol (both polyols) are used together in one formula despite their chemical similarity.", "Although both are polyols, they differ in viscosity, sweetness, and functional role: glycerin is used in a relatively small amount as a humectant/co-solvent, while sorbitol (as a solution) is used in a much larger amount as a main sweet vehicle partially replacing sucrose; combining them leverages each one's complementary properties rather than relying on just one."], ["What is the similarity between classifying sorbitol as a 'polyol' and acacia as a 'natural gum' regarding the basis of naming?", "Both classifications rely on the chemical nature/source of the substance: 'polyol' is a chemical classification describing a molecular structure (a multi-hydroxyl alcohol), while 'natural gum' is a source-based classification describing the substance's origin (a natural plant secretion); the difference is that one classification (polyol) is based on chemical structure while the other (natural gum) is based on biological source, not necessarily chemical structure."]];
+const fcCardsL3 = [["Explain the mechanism of sucrose inversion in the presence of citric acid, describing the role of the hydrogen ion and the products formed.", "Citric acid provides H+ ions that act as a catalyst; sucrose reacts with water (acid-catalyzed hydrolysis) to yield invert sugar composed of equal parts glucose and fructose; the reaction accelerates with increasing acidity and temperature."], ["If a syrup formula contains a cationic drug and sodium CMC as the viscosity builder, what problem is expected and how might it theoretically be resolved?", "Sodium CMC is an anionic polymer, so an incompatibility reaction with the cationic drug is expected, potentially causing precipitation, loss of activity, or viscosity changes; this can be resolved by substituting a non-ionic builder like HPMC or a polyol such as sorbitol or glycerin."], ["Critically compare using 70% sorbitol alone as the sole sweetening source versus a sorbitol + saccharin blend, in terms of viscosity, sweetness, and stability.", "Sorbitol alone (60% sucrose sweetness) gives good viscosity (half of simple syrup) but lower sweetness, while adding saccharin (500× sweetness) compensates for the sweetness deficit without significantly affecting viscosity; however, saccharin's bitter aftertaste must be considered, so the blend balances body and sweetness at some cost to taste purity."], ["Based on the solubility table, approximate the rate of sucrose solubility increase per 10°C between 50°C and 90°C, and what is its practical manufacturing significance?", "The total increase from 2.59 to 4.20 g/mL over 40°C gives an approximate rate of 0.4 g/mL per 10°C; practically, this means slight extra heating allows more sugar to dissolve faster, but raises the risk of inversion and caramelization if heating exceeds what's necessary."], ["Distinguish between cases where percolating the sucrose itself is preferred versus percolating the source of the medicinal component in the percolation method, with justification.", "Sucrose itself is percolated when the goal is simply preparing a plain syrup with no separate medicinal component needing extraction; percolating the medicinal source (as with ipecac) is used when the active substance resides within a crude material (roots/powder) requiring selective extraction with a suitable solvent before combining with sucrose or syrup, making the process two separate procedures instead of one."], ["Why is the 15 mL dose of ipecac syrup as an emetic clinically sensitive, and how does it relate to the nature of the three alkaloids it contains?", "The alkaloids (emetine, cephaeline, psychotrine) are potent active compounds that induce vomiting via central and peripheral irritation; the precisely defined dose (15 mL) is necessary to achieve the desired emetic effect without crossing into dangerous cardiac or systemic toxicity, making concentration and dosing accuracy essential for this type of syrup."], ["Analyze, from a kinetic and chemical perspective, why heat-sensitive components should be added after the sugar dissolves by heat rather than from the start.", "Sugar dissolution requires a period of heat exposure; prolonging this exposure with sensitive components present increases their chance of degradation or volatilization (as with volatile oils and alcohol); by adding them after dissolution and rapidly cooling, their high-heat exposure time is minimized, preserving their potency and intended concentration."], ["Discuss why sorbitol is classified under 'polyols' rather than 'natural' or 'semi-synthetic' viscosity builders, linking this to its chemical origin.", "Sorbitol results from the chemical hydrogenation of glucose, being a hexahydric alcohol with a defined chemical structure (polyol) — it is neither a natural polysaccharide (like tragacanth and acacia) nor a chemically modified cellulose derivative (like Na CMC and HPMC); it is therefore placed in its own category (polyols), reflecting its distinct chemical structure despite sharing the same function (viscosity building)."], ["Evaluate which is more suitable for a long-shelf-life syrup: heat dissolution with a preservative, or cold agitation without an added preservative? Justify using lecture information.", "Heat dissolution with a preservative and boiled water offers a practical balance: speed with added protection against microbial contamination, though it carries some risk of inversion/discoloration if heat isn't controlled; cold agitation gives maximum chemical stability (no inversion) and clear color but is slower, and the lecture doesn't state it necessarily replaces the need for a preservative; practically, combining boiled water with a permitted preservative (as stated) is the recommended approach for shelf life regardless of the dissolution method used."], ["What are the logical links between the thirteen listed sorbitol properties, and how do they support each other in its selection for diabetic patients?", "Not causing hyperglycemia and not causing dental caries make it metabolically and dentally safe; its slower GI absorption explains its mild effect on blood sugar; its chemical stability and non-irritation to membranes ensure long-term safety; while its physical properties (half the viscosity of simple syrup, compatibility with other polyols, reduced crystallization, prevention of cap sticking) make it manufacturing-practical; together, these properties make sorbitol a functionally, clinically, and manufacturing-integrated choice, not just a sweetness substitute."], ["Suppose a tincture contains active medicinal components soluble only in alcohol. Outline the logical steps to convert it into an aqueous medicated syrup, per the lecture.", "Since the alcohol-soluble components are the desired ones (medicinally active), a method must first be found to render them water-soluble (rather than removing them by filtration as with unwanted components); once the resulting preparation is miscible with aqueous preparations, it can be added directly to simple or flavored syrup — this differs from the case of unwanted components, which are removed by mixing with water, allowing separation, and filtering."], ["Compare 'self-preservation' in sucrose at 60% and sorbitol's 'no preservative needed' at a similar concentration, regarding the likely mechanism.", "Both concepts rely on the principle of reduced water activity at high sugar/polyol concentrations, making the environment unsuitable for microbial growth; thus, the similarity in the ~60% figure between sucrose and sorbitol is not coincidental but reflects a shared physicochemical principle of self-preservation via reducing free water available to microbes, despite the differing chemical structures of the two substances."], ["Discuss why the sweetener table (synthetic and natural) can be seen as a pharmaceutical decision-making tool rather than just a list of facts, citing two contrasting examples from the table.", "For example, aspartame (200× sweetness) is unsuitable for formulations requiring heat processing due to its instability in hot solution, while acesulfame-K, with the same 200× sweetness, is heat stable and preferred in that case; similarly, saccharin (500×) is cheap and effective but leaves a bitter aftertaste, which might call for blending with sucralose (stable over a broad pH range) to improve taste without sacrificing stability — making the table a practical reference for selecting the right sweetener based on manufacturing and storage conditions."], ["What are the potential shortcomings of using sodium CMC as the sole viscosity builder in a formula containing high concentrations of alcohol and electrolytes? Suggest an alternative.", "Sodium CMC (an anionic semi-synthetic polymer) is incompatible with excessive amounts of alcohol and electrolytes, which may cause polymer precipitation or viscosity loss; the suggested alternative is using a polyol such as sorbitol or glycerin, which showed better compatibility with alcohol (as seen in the antihistamine syrup formula containing both alcohol and sorbitol)."], ["Analyze why the antihistamine syrup formula (combining glycerin, syrup, sorbitol solution, alcohol, and sodium benzoate) can be considered an integrated example of multi-system viscous formulation principles.", "The formula combines two sweet vehicles (syrup and sorbitol solution) to achieve sweetness and body while reducing total reliance on sucrose, glycerin as a humectant/co-solvent, alcohol as a co-solvent for the active ingredient and possibly a partial preservative aid, while sodium benzoate ensures final microbial preservation; this layered design reflects the principle of combining multiple systems (polyol, sucrose, alcohol, preservative) rather than relying on one system alone, achieving a balance of sweetness, body, stability, and drug compatibility."], ["Explain the fundamental difference between sucrose chemical 'inversion' and the 'crystallization' that sorbitol prevents, and why each is addressed differently.", "Inversion is a chemical reaction (acid-catalyzed hydrolysis) converting sucrose into glucose and fructose, addressed by controlling heat and acidity or using the cold preparation method; crystallization is a physical change (sucrose exiting solution as crystals upon saturation or cooling), addressed by physically adding an anti-crystallization agent like sorbitol (30% to simple syrup) without altering sucrose's chemical structure; the former is a chemical problem, the latter a physical state problem, hence the different treatment approaches."], ["Explain how a poorly designed diabetic syrup formula (using an anionic viscosity builder with a cationic drug and a heat-unstable sweetener) could fail in three different ways simultaneously.", "First, the anionic builder (like sodium CMC) may react with the cationic drug causing precipitation or loss of activity; second, if the syrup is heat-prepared, the heat-unstable sweetener (like aspartame) may degrade and lose sweetness; third, if heating also causes inversion of any residual sucrose, color and body may change; this shows that a single formula's failure can result from multiple independent compatibility problems interacting together."], ["Evaluate why 'balanced viscosity' can be considered a harder goal than 'balanced sweetness' when designing a multi-component diabetic syrup, based on lecture information.", "Sweetness can be adjusted relatively easily by changing the amount of one highly potent sweetener (like saccharin or stevia) without greatly affecting formula bulk; viscosity, however, is affected by multiple interacting factors: builder type (natural/semi-synthetic/polyol), its compatibility with the drug, electrolytes, and alcohol, and its concentration which may need continuous adjustment based on other ingredients (e.g., sorbitol halving viscosity); this multiplicity of interacting factors makes viscosity adjustment more complex than sweetness alone."], ["Based on the lecture information, design a comprehensive strategy for preparing a medicated syrup containing a heat-sensitive component whose source is an alcoholic tincture with undesirable impurities.", "First, mix the tincture with water and let it stand until the water-insoluble portion (unwanted alcohol-soluble impurities) separates, then filter to remove it and obtain a pure aqueous filtrate; second, given the heat-sensitive component, prepare the syrup either by agitation without heat (for maximum stability) or by dissolving sucrose in water with heat first, then adding the medicated filtrate after rapid cooling; finally, store the product in a tight container with a suitable preservative, without autoclave sterilization."], ["Discuss the causal relationship between 'limited free water in concentrated syrup' and the 'necessity of self-preservation at 60%' as two phenomena linked to the same physical principle.", "Both phenomena result from the high sugar (or sorbitol) concentration strongly binding water molecules around it (hydration), reducing available free water; this same reduction is what makes a solid dissolve slowly when added directly (because free water is scarce), and it's the same thing that prevents microbial growth (because microbes need free water to survive); thus, both phenomena (slow direct dissolution and self-preservation) are two faces of the same physical principle: reduced water activity at high concentration."], ["Critically compare the risks of using aspartame versus sucralose in a diabetic syrup that requires heat preparation followed by long-term storage at room temperature.", "Aspartame is unstable in hot solution, so it may degrade during the heat preparation itself, reducing the final product's sweetness from the start regardless of subsequent storage; sucralose is stable over a broad pH range and isn't noted as heat-unstable, making it more suitable for heat preparation, though its compatibility with other ingredients and solution pH during long storage should still be confirmed; thus aspartame carries a specifically higher risk at the heat-preparation stage, while the main risk with any sweetener during long storage is the overall chemical stability of the complete formula."], ["Analyze why 'alcohol compatibility' can be considered a critical test point distinguishing the suitability of a polymeric viscosity builder from a polyol in formulas with high alcoholic content.", "Polymers (natural and semi-synthetic) are stated to be incompatible with excessive alcohol amounts, making them a risky choice in high-alcohol formulas (like the antihistamine syrup containing 60 mL alcohol); no such restriction is noted for polyols (like sorbitol, actually used in that same alcoholic formula), which practically explains why sorbitol rather than sodium CMC was chosen as the main vehicle in an alcohol-containing formula; thus, a formula's alcohol level is a decisive practical criterion for choosing the viscosity-builder type."], ["Explain why the ipecac extraction process (percolation with a hydroalcoholic solvent) and the impurity-removal process from a tincture (mixing with water and filtering) can be considered 'opposite-direction' processes despite using similar principles.", "In ipecac extraction, the goal is to pull (extract) the active component from a solid crude material into the hydroalcoholic solvent — 'bringing in' the active substance into solution; in removing impurities from a tincture, the goal is to 'push out' and precipitate the unwanted (water-insoluble) component from solution by adding water; both processes use the principle of selective solubility (certain substances dissolve in one solvent but not another), but the direction is reversed: one extracts (brings in), the other precipitates (pushes out)."], ["What conclusions can be drawn from comparing the synthetic and natural sweetener sweetness-degree tables regarding the relationship between chemical origin and sweetness degree?", "There's no simple direct relationship between a sweetener being natural or synthetic and its sweetness degree: natural sweeteners like stevia (250) are less sweet than synthetic ones like neotame (8000) and saccharin (500), yet also sweeter than other natural sweeteners like sorbitol (0.6), mannitol (0.5), and xylitol (1.0); this shows sweetness degree is tied to the substance's specific molecular structure rather than simply being natural or synthetic — some natural polyols are very weakly sweet while some synthesized compounds are extremely sweet."], ["Analyze this scenario: a pharmacist wants to prepare a sugar-free cough linctus for a diabetic patient who is also sensitive to saccharin. Propose an integrated solution based on lecture information.", "Sucrose can be replaced with sorbitol (as noted in sugar-free linctuses), then a sweetener other than saccharin should be used to avoid sensitivity, such as stevia (natural, 250× sweetness) or sucralose (600×, stable over a broad pH range) instead of saccharin; it should also be ensured that the viscous consistency needed for the soothing effect on mucous membranes is still achieved despite the absence of sucrose, via sorbitol and its appropriate concentration."], ["Discuss how the logical sequence of steps in the 'addition of sucrose to a prepared medicated liquid' method reflects the principle of 'separating purification of the medicinal source from building sweet body'.", "The steps begin by processing the medicated liquid (tincture/extract) alone first — either rendering its alcohol-soluble components water-soluble, or removing unwanted impurities by mixing and filtering — before any sucrose addition; this temporal separation ensures the medicated liquid is clean and stable before combining it with sucrose or syrup to build body and sweetness, preventing purity issues from tangling with sweetening/viscosity issues in one complex step."], ["If designing a comparative test to evaluate three syrup preparation methods (hot, cold, percolation) for a given component, what are the three most important criteria to measure based on the lecture?", "1) Chemical stability of the active component (does it degrade or invert with heat?), 2) final color and clarity of the syrup (does it turn amber from caramelization?), 3) time and effort required for preparation versus the required final stability degree (balancing speed against stability); these three criteria summarize the main differences between methods noted in the lecture."], ["What is the deeper explanation for why 'medium-viscosity sodium CMC' is the specific choice in the diabetic syrup formula, rather than a high- or low-viscosity grade?", "The medium-viscosity grade achieves a balance: it provides enough body to mimic simple syrup's consistency without being so thick it's hard to pour or take, or so thin it fails to achieve the required mouthfeel for a medicinal syrup; choosing the medium grade reflects the principle of achieving function (body) without sacrificing ease of use and patient acceptance."], ["Compare the relative risks of using tragacanth (natural) versus Na CMC (semi-synthetic) in a formula with a high electrolyte concentration.", "Both (natural and semi-synthetic) are listed together as incompatible with excessive electrolyte amounts, meaning both face a similar risk of instability or precipitation with high electrolytes; the potential difference lies in precise molecular structure (molecular weight, degree of ionic substitution) determining severity, but the lecture groups them under the same cautionary rule without further distinguishing their relative severity."], ["Discuss why 'self-preservation' can be seen as an economic concept as much as a pharmaceutical one in the context of large-scale diabetic syrup manufacturing.", "Achieving a self-preserving concentration (60% sucrose or above 60% sorbitol) eliminates the need to purchase and add a separate preservative, reducing cost and manufacturing complexity and reducing potential chemical incompatibility risks with an added preservative; this makes self-preservation an economic advantage (reduced cost and regulatory risks tied to preservatives) in addition to a pharmaceutical one (microbial protection)."], ["Analyze how neglecting the 'final volume adjustment with purified water' step after cooling in the hot method could cause problems with the final concentration of active ingredients.", "During heating, some water evaporates; if the final volume isn't adjusted with purified water after cooling, the actual volume will be less than intended while the amount of active ingredients (drug, sucrose) remains the same, resulting in a higher-than-planned concentration per unit volume; this could cause unintended overdosing for the patient or altered expected viscosity and sweetness, making volume adjustment essential for maintaining dosing and concentration accuracy."], ["What is the logical link between using 'a vessel larger than the final syrup volume' in the cold method and 'volume adjustment with water' in the hot method, in terms of shared goal?", "Both measures aim to ensure the final syrup volume and concentration match what's intended despite differing processes: in the cold method, the larger vessel prevents material loss from spilling during vigorous agitation; in the hot method, volume adjustment with water compensates for water loss through evaporation during heating; both are corrective/preventive measures maintaining final concentration accuracy despite differing potential error sources (spilling vs. evaporation)."], ["Evaluate the accuracy of the statement: 'Every syrup containing a heat-sensitive component must be prepared solely by the cold method,' based on lecture information.", "The statement is not entirely accurate; the lecture shows that heat-sensitive components can also be added within the hot method itself, but after (not with) sugar dissolution, followed by rapid cooling; this means the hot method can be adapted (late addition plus rapid cooling) to accommodate heat-sensitive components without necessarily requiring a full switch to the cold method, which remains the most stable option but not the only possible one."], ["Explain how the 'difference in sweetness between sorbitol (0.6) and xylitol (1.0)' might justify choosing one over the other in certain formulas despite both being similarly-used polyols.", "Xylitol is closer to sucrose's sweetness (1.0 vs. sorbitol's 0.6), meaning less need for additional sweeteners to compensate when used; but sorbitol has additional properties documented in detail in the lecture (reducing crystallization, preventing cap-sticking, compatibility with other polyols), which aren't mentioned for xylitol; so choosing between them may depend on balancing closeness to sucrose sweetness (favoring xylitol) against additional documented functional properties (favoring sorbitol)."], ["Discuss how the presence of 'sodium benzoate' in a formula already containing 60 mL of alcohol challenges the concept of 'sufficient preservation by alcohol alone'.", "Although alcohol at a certain concentration can contribute to inhibiting microbial growth, the explicit presence of sodium benzoate as a separate preservative in the formula indicates that the alcohol concentration (60 mL out of 1000, i.e., 6%) alone is not sufficient to ensure complete long-term microbial preservation; this shows that relying on a relatively low alcohol concentration doesn't eliminate the need for a dedicated preservative, especially in a complex aqueous formula containing sugars and polyols that could support microbial growth if not carefully controlled."], ["What deeper conclusion can be drawn from the fact that 'acacia and tragacanth' are both natural gums but with completely different sugar sources?", "This shows that 'natural' as a broad classification doesn't necessarily imply similarity in precise chemical composition or functional behavior; although both are used as natural viscosity builders, their chemical compositions differ fundamentally (different polysaccharide structures, different constituent sugars), which could lead to differences in viscosity, compatibility, and stability under certain conditions, despite both being grouped under the 'natural builders' category."], ["Analyze why understanding the 'mechanism of sucrose inversion' is useful for understanding why autoclave sterilization is unsuitable even if no acid is explicitly added to the formula.", "Even without explicitly added acid, many pharmaceutical components (like certain drugs or aqueous solutions) may carry sufficient natural acidity (relatively low pH) to catalyze some inversion under the severe, prolonged heat of autoclaving; also, severe heat alone (even without strong acid catalysis) can cause direct caramelization and thermal decomposition of sucrose; thus the risk of autoclave sterilization isn't tied only to explicit acid presence but to severe heat exposure itself, explaining why it's avoided generally for all syrups, not just acidic ones."], ["Connect the concept of 'linctuses as a local soothing treatment' with the concept of 'viscosity as a functional, not merely aesthetic, property' in the context of cough syrup design.", "High viscosity in linctuses isn't just for giving an appealing texture — it's directly functional: the viscous consistency allows the preparation to adhere longer to inflamed throat mucous membranes, prolonging contact time and enhancing the local soothing effect; thus, choosing a high-concentration sweetness source (sucrose or sorbitol) in linctuses is directly tied to the therapeutic goal (coating and soothing the mucous membrane), not just improving taste."], ["Evaluate why choosing the 'target' (sucrose vs. a medicinal source like a tincture) in the percolation method is a decision that shapes the entire workflow.", "If the goal is percolating sucrose itself, the process is straightforward to produce a plain syrup without a separate extraction step; but if the goal is percolating the medicinal source (like ipecac), the process branches into two entirely separate sequential procedures (extraction, then syrup preparation), increasing time and complexity and requiring selection of a suitable extraction solvent (like the hydroalcoholic one); this shows that the 'what to percolate' decision is a fundamental branch point determining the number of steps and the solvents/equipment required."], ["Discuss how the sucrose solubility/temperature table can be used practically to determine the lowest possible temperature for preparing a concentrated syrup without unnecessary excess heating.", "By knowing the required solubility (e.g., to produce a syrup with a certain sugar concentration), the lowest temperature from the table achieving that solubility can be chosen (e.g., 60°C gives 2.89 g/mL), rather than heating to unnecessarily higher temperatures (like 90°C) which only increase the risk of inversion and caramelization without added benefit if the required solubility is already achieved at a lower temperature; this applies the lecture's principle of 'using the minimum sufficient heat' (caution against excessive heat)."]];
+
+let fcLevel=1;
+let fcData = fcCardsL1;
+let fcIndex=0, fcFlipped=false, fcOrder=fcData.map((_,i)=>i);
+
+function fcLevelData(lvl){
+  if(lvl===1) return fcCardsL1;
+  if(lvl===2) return fcCardsL2;
+  return fcCardsL3;
+}
+
+function renderCard(){
+  if(!fcData.length) return;
+  const idx=fcOrder[fcIndex];
+  const card=document.getElementById('fcCard');
+  const text=document.getElementById('fcText');
+  const tag=card.querySelector('.tag');
+  card.classList.toggle('answer',fcFlipped);
+  tag.textContent=fcFlipped?'A':'Q';
+  text.textContent=fcFlipped?fcData[idx][1]:fcData[idx][0];
+  document.getElementById('fcCount').textContent='Card '+(fcIndex+1)+' of '+fcData.length;
+  document.getElementById('fcSide').textContent=fcFlipped?'Answer — click to flip back':'Question — click to flip';
+}
+document.getElementById('fcCard').addEventListener('click',()=>{fcFlipped=!fcFlipped;renderCard();});
+document.getElementById('fcNext').addEventListener('click',()=>{fcIndex=(fcIndex+1)%fcData.length;fcFlipped=false;renderCard();});
+document.getElementById('fcPrev').addEventListener('click',()=>{fcIndex=(fcIndex-1+fcData.length)%fcData.length;fcFlipped=false;renderCard();});
+document.getElementById('fcShuffle').addEventListener('click',()=>{
+  for(let i=fcOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcOrder[i],fcOrder[j]]=[fcOrder[j],fcOrder[i]];}
+  fcIndex=0; fcFlipped=false; renderCard();
+});
+document.querySelectorAll('#fcLevelRow .level-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#fcLevelRow .level-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    fcLevel=parseInt(btn.dataset.lvl,10);
+    fcData=fcLevelData(fcLevel);
+    fcOrder=fcData.map((_,i)=>i);
+    fcIndex=0; fcFlipped=false;
+    renderCard();
+  });
+});
+renderCard();
+
+/* ---------- QUIZ ---------- */
+const rawQuizL1 = [["What must artificial syrups provide besides sweetness and viscosity?", ["Self-preservation at 60%", "Coloring at 10%", "Flavor masking at 5%", "Acidity at pH 3"], "Self-preservation at 60%"], ["Which of the following is NOT a non-glycogenic viscosity builder subtype?", ["Natural", "Semi-synthetic", "Polyols", "Disaccharide"], "Disaccharide"], ["Tragacanth's water-insoluble fraction is called:", ["Bassorin", "Tragacanthin", "Arabin", "Rhamnogen"], "Bassorin"], ["Tragacanth's water-soluble fraction is called:", ["Bassorin", "Tragacanthin", "Pectin", "Dextran"], "Tragacanthin"], ["Hydrolysis of tragacanthin yields all of the following EXCEPT:", ["L-arabinose", "D-xylose", "D-galacturonic acid", "D-fructose"], "D-fructose"], ["Acacia's aggregate nucleus is built around:", ["Arabic acid", "Citric acid", "Glucuronic acid", "Tartaric acid"], "Arabic acid"], ["Which minerals are bound in the acacia aggregate?", ["Calcium, magnesium, potassium", "Sodium, iron, zinc", "Copper, manganese, chloride", "Potassium, sulfur, phosphorus"], "Calcium, magnesium, potassium"], ["Which sugars are part of the acacia gum aggregate?", ["Arabinose, galactose, rhamnose", "Glucose, fructose, sucrose", "Xylose, mannose, ribose", "Lactose, maltose, sucrose"], "Arabinose, galactose, rhamnose"], ["Sorbitol is chemically classified as a:", ["Hexahydric alcohol", "Monosaccharide", "Disaccharide", "Amino acid"], "Hexahydric alcohol"], ["Sorbitol is produced by:", ["Glucose hydrogenation", "Fructose oxidation", "Sucrose inversion", "Starch hydrolysis"], "Glucose hydrogenation"], ["A saturated sorbitol solution is:", ["70% w/w", "50% w/w", "85% w/w", "60% w/w"], "70% w/w"], ["Sorbitol is how sweet compared to sucrose?", ["60% as sweet", "Equally sweet", "Twice as sweet", "30% as sweet"], "60% as sweet"], ["Above what sorbitol concentration is no added preservative needed?", ["60% w/w", "40% w/w", "80% w/w", "20% w/w"], "60% w/w"], ["Large quantities of sorbitol may cause:", ["A laxative effect", "Constipation", "Hyperglycemia", "Tooth decay"], "A laxative effect"], ["Sorbitol's viscosity compared to simple syrup is:", ["Half", "Double", "Equal", "One-quarter"], "Half"], ["Adding sorbitol at what percentage to simple syrup reduces crystallization?", ["30%", "10%", "50%", "70%"], "30%"], ["Which of these is NOT one of the four general syrup preparation methods?", ["Percolation", "Solution with heat", "Emulsification", "Addition of sucrose to a medicated liquid"], "Emulsification"], ["The 'solution with heat' method is chosen when:", ["Rapid preparation is needed and ingredients are heat-stable", "Ingredients are heat-labile", "Maximum stability is the top priority", "The syrup contains alcohol"], "Rapid preparation is needed and ingredients are heat-stable"], ["In the hot process, heat-labile or volatile agents are added:", ["After sugar dissolves, then rapidly cooled", "Before sugar is added", "Only at the very end after bottling", "Never added to hot syrups"], "After sugar dissolves, then rapidly cooled"], ["Sucrose inversion during heating is catalyzed by:", ["Hydrogen ions", "Hydroxide ions", "Sodium ions", "Chloride ions"], "Hydrogen ions"], ["Overheated syrup becomes amber colored due to:", ["Caramelization", "Oxidation of preservative", "Microbial contamination", "Crystallization"], "Caramelization"], ["Decomposed (overheated) syrups are:", ["More susceptible to fermentation and microbial growth", "Less susceptible to microbial growth", "Completely sterile", "Unaffected in stability"], "More susceptible to fermentation and microbial growth"], ["Can syrups be sterilized by autoclaving?", ["No, due to risk of heat decomposition", "Yes, always", "Only sugar-free syrups", "Only if alcohol is present"], "No, due to risk of heat decomposition"], ["Syrups should be stored in:", ["A tight container", "An open container", "A metal container", "Direct sunlight"], "A tight container"], ["At 70°C, sucrose solubility in water is approximately:", ["3.25 g/mL", "2.59 g/mL", "4.20 g/mL", "2.89 g/mL"], "3.25 g/mL"], ["At 50°C, sucrose solubility in water is approximately:", ["2.59 g/mL", "3.06 g/mL", "3.69 g/mL", "3.94 g/mL"], "2.59 g/mL"], ["As temperature increases, sucrose solubility in water:", ["Increases", "Decreases", "Stays constant", "Decreases then increases"], "Increases"], ["Solution by agitation without heat is used mainly to:", ["Avoid heat-induced inversion of sucrose", "Speed up preparation", "Increase viscosity", "Improve color"], "Avoid heat-induced inversion of sucrose"], ["Syrup prepared without heat is:", ["Practically colorless", "Amber colored", "Always cloudy", "Highly viscous"], "Practically colorless"], ["Compared to the hot process, the cold (agitation) process is:", ["More time-consuming but more stable", "Faster but less stable", "Equally fast", "Not usable for sucrose"], "More time-consuming but more stable"], ["Glycyrrhiza (licorice) syrup is an example of syrup made using:", ["Simple/non-medicated syrup as vehicle instead of sucrose", "Percolation of sucrose", "Heat inversion", "Ipecac extraction"], "Simple/non-medicated syrup as vehicle instead of sucrose"], ["Solid agents dissolve slowly when added directly to syrup because:", ["The viscous nature limits distribution and available water is limited", "The syrup is too acidic", "The syrup is too hot", "Solids are always insoluble in syrup"], "The viscous nature limits distribution and available water is limited"], ["In the antihistamine syrup formula, the active ingredient is:", ["Chlorpheniramine maleate", "Diphenhydramine", "Loratadine", "Cetirizine"], "Chlorpheniramine maleate"], ["In the antihistamine syrup formula, the amount of glycerin used is:", ["25.0 mL", "60.0 mL", "83.0 mL", "282.0 mL"], "25.0 mL"], ["In the antihistamine syrup formula, the preservative used is:", ["Sodium benzoate", "Methylparaben", "Sorbic acid", "Benzalkonium chloride"], "Sodium benzoate"], ["Tinctures and fluidextracts used as the source of medication in syrups typically contain:", ["Alcohol-soluble constituents", "Only inorganic salts", "Only water-soluble sugars", "No active constituents"], "Alcohol-soluble constituents"], ["Undesirable alcohol-soluble components are removed from a tincture by:", ["Mixing with water, standing, and filtering", "Adding more alcohol", "Boiling briefly", "Adding sucrose directly"], "Mixing with water, standing, and filtering"], ["Which syrup is NOT listed as an example of 'addition of sucrose to a prepared medicated liquid'?", ["Ipecac syrup", "Cherry syrup", "Orange syrup", "Tolu balsam syrup"], "Ipecac syrup"], ["In the percolation method, what may be percolated?", ["Either sucrose or the medicinal source", "Only sucrose", "Only water", "Only preservatives"], "Either sucrose or the medicinal source"], ["When percolation forms an extractive, the process involves:", ["Two separate procedures — extractive prep, then syrup prep", "One single continuous step", "No filtration required", "Only heat-based dissolution"], "Two separate procedures — extractive prep, then syrup prep"], ["Ipecac syrup is prepared by adding glycerin and syrup to:", ["An extractive of powdered ipecac obtained by percolation", "A tincture of ipecac obtained by maceration", "Boiled ipecac powder", "A saturated sorbitol solution"], "An extractive of powdered ipecac obtained by percolation"], ["Ipecac is derived from:", ["Dried rhizome and roots of Cephaëlis ipecacuanha", "Dried leaves of a shrub", "Bark of a tropical tree", "Seeds of a legume"], "Dried rhizome and roots of Cephaëlis ipecacuanha"], ["The active alkaloids in ipecac include:", ["Emetine, cephaeline, psychotrine", "Morphine, codeine, thebaine", "Atropine, scopolamine, hyoscyamine", "Quinine, quinidine, cinchonine"], "Emetine, cephaeline, psychotrine"], ["Ipecac syrup is classified as a(n):", ["Emetic", "Antihistamine", "Laxative", "Antipyretic"], "Emetic"], ["The usual dose of ipecac syrup is:", ["15 mL", "5 mL", "30 mL", "50 mL"], "15 mL"], ["Linctuses are primarily used to treat:", ["Cough", "Diarrhea", "Hypertension", "Insomnia"], "Cough"], ["Linctuses are especially useful when the drug:", ["Has a bitter taste", "Is highly water-soluble", "Is heat-stable", "Has no taste"], "Has a bitter taste"], ["Sugar-free linctuses typically replace sucrose with:", ["Sorbitol", "Sodium CMC", "Acacia", "Tragacanth"], "Sorbitol"], ["Which sweetener is about 500 times as sweet as sucrose with a bitter aftertaste?", ["Saccharin", "Aspartame", "Sucralose", "Stevia"], "Saccharin"], ["Which sweetener is banned in the USA?", ["Sodium cyclamate", "Saccharin", "Sucralose", "Acesulfame-K"], "Sodium cyclamate"], ["Which sweetener carries a warning for patients with PKU?", ["Aspartame", "Sucralose", "Stevia", "Xylitol"], "Aspartame"], ["Which sweetener is roughly 8000 times sweeter than sucrose?", ["Neotame", "Saccharin", "Acesulfame-K", "Sorbitol"], "Neotame"], ["Which sweetener is noted for stability across a broad pH range?", ["Sucralose", "Aspartame", "Sodium cyclamate", "Mannitol"], "Sucralose"], ["Which sweetener is heat stable and about 200x as sweet as sucrose?", ["Acesulfame-K", "Aspartame", "Saccharin", "Xylitol"], "Acesulfame-K"], ["Stevia's main active compound is:", ["Rebaudioside A (a steviol glycoside)", "Glycyrrhizin", "Sucralose", "Cyclamate"], "Rebaudioside A (a steviol glycoside)"], ["Commercial stevia extracts are known as:", ["Truvia, Rebiana, Pure Via", "Splenda, Equal, Sweet'N Low", "Nutrasweet, Canderel", "Nutrinova"], "Truvia, Rebiana, Pure Via"], ["Mannitol is derived from:", ["Mannose", "Glucose", "Fructose", "Sucrose"], "Mannose"], ["Which viscosity-builder category includes sorbitol and glycerin?", ["Polyols", "Natural gums", "Semi-synthetic polymers", "Glycogenic agents"], "Polyols"], ["Anionic polymer viscosity builders are incompatible with:", ["Cationic drugs", "Anionic drugs", "Neutral drugs", "Non-ionic surfactants"], "Cationic drugs"], ["Strong dehydrating agents added to natural/semisynthetic polymer dispersions cause:", ["Coagulation", "Dissolution", "Inversion", "Sweetening"], "Coagulation"]];
+const rawQuizL2 = [["Ipecac syrup is classified as:", ["An emetic", "A laxative", "An antihistamine", "An antipyretic"], "An emetic"], ["The usual dose of ipecac syrup is:", ["15 mL", "5 mL", "30 mL", "50 mL"], "15 mL"], ["Linctuses are primarily used to treat:", ["Cough", "Diarrhea", "Hypertension", "Insomnia"], "Cough"], ["Linctuses are especially useful when the drug has:", ["A bitter taste", "No taste at all", "High water solubility", "Strong acidity"], "A bitter taste"], ["Sugar-free linctuses replace sucrose with:", ["Sorbitol", "Sodium CMC", "Acacia", "Tragacanth"], "Sorbitol"], ["Which sweetener is about 500x sweeter than sucrose and leaves a bitter aftertaste?", ["Saccharin", "Aspartame", "Sucralose", "Stevia"], "Saccharin"], ["Which sweetener is banned in the USA?", ["Sodium cyclamate", "Saccharin", "Sucralose", "Acesulfame-K"], "Sodium cyclamate"], ["Which sweetener carries a PKU warning?", ["Aspartame", "Sucralose", "Stevia", "Xylitol"], "Aspartame"], ["Which sweetener is roughly 8000x sweeter than sucrose?", ["Neotame", "Saccharin", "Acesulfame-K", "Sorbitol"], "Neotame"], ["Which sweetener is stable across a broad pH range?", ["Sucralose", "Aspartame", "Sodium cyclamate", "Mannitol"], "Sucralose"], ["Which sweetener is heat stable and about 200x as sweet as sucrose?", ["Acesulfame-K", "Aspartame", "Saccharin", "Zylitol"], "Acesulfame-K"], ["Stevia's main active compound is:", ["Rebaudioside A, a steviol glycoside", "Glycyrrhizin", "Sucralose", "Cyclamate"], "Rebaudioside A, a steviol glycoside"], ["Commercial stevia extracts are marketed as:", ["Truvia, Rebiana, Pure Via", "Splenda, Equal, Sweet'N Low", "Nutrasweet, Canderel", "Nutrinova"], "Truvia, Rebiana, Pure Via"], ["Mannitol is derived from:", ["Mannose", "Glucose", "Fructose", "Sucrose"], "Mannose"], ["Which category of viscosity builders includes sorbitol and glycerin?", ["Polyols", "Natural gums", "Semi-synthetic polymers", "Glycogenic agents"], "Polyols"], ["Strong dehydrating agents added to natural or semi-synthetic polymer dispersions cause:", ["Coagulation", "Extra dissolution", "Sucrose inversion", "Extra sweetness"], "Coagulation"], ["The essential difference between tragacanth's soluble and insoluble fractions is that:", ["Bassorin is insoluble, tragacanthin is soluble", "Both are equally soluble", "Both are insoluble", "There is no chemical difference between them"], "Bassorin is insoluble, tragacanthin is soluble"], ["What are the two main reactions heat can cause in a sucrose syrup?", ["Inversion and caramelization", "Freezing and evaporation only", "Sucrose crystallization only", "Preservative breakdown only"], "Inversion and caramelization"], ["Which preparation method gives a chemically more stable, though slower, syrup?", ["Agitation without heat", "Solution with heat", "Percolation of sucrose", "Autoclave sterilization"], "Agitation without heat"], ["From 50°C to 90°C, sucrose solubility increases by approximately:", ["1.6 g/mL", "0.5 g/mL", "3.0 g/mL", "10 g/mL"], "1.6 g/mL"], ["What is the key difference between 'addition of sucrose to a medicated liquid' and 'percolation'?", ["The first uses a ready-made liquid; the second first extracts the substance from a crude source", "Both use identical steps", "The first never uses sucrose", "The second never needs a medicinal source"], "The first uses a ready-made liquid; the second first extracts the substance from a crude source"], ["Why are undesirable alcohol-soluble tincture components removed?", ["They are not the desired medicinal agents, so they're removed by mixing with water and filtering", "They are always toxic", "They excessively raise viscosity", "They accelerate inversion"], "They are not the desired medicinal agents, so they're removed by mixing with water and filtering"], ["Which of the following is NOT an example of adding sucrose to a medicated liquid?", ["Ipecac syrup", "Cherry syrup", "Orange syrup", "Tolu balsam syrup"], "Ipecac syrup"], ["What is the relationship between sorbitol's relative viscosity and the percentage added to simple syrup?", ["Half the viscosity of simple syrup; up to 30% may be added to reduce crystallization", "Double the viscosity; only 5% may be added", "Equal viscosity; 50% may be added", "No relationship between viscosity and added percentage"], "Half the viscosity of simple syrup; up to 30% may be added to reduce crystallization"], ["What is the functional difference between glycerin and sorbitol solution in the antihistamine syrup formula?", ["Glycerin is a co-solvent/humectant in a smaller amount; sorbitol solution is the main sweet vehicle in a larger amount", "Both are used only as preservatives", "Glycerin is the only preservative", "Sorbitol solution is used only as a colorant"], "Glycerin is a co-solvent/humectant in a smaller amount; sorbitol solution is the main sweet vehicle in a larger amount"], ["Why is a vessel larger than the final syrup volume preferred for small-scale cold preparation?", ["To allow thorough, complete agitation of the ingredients", "To reduce manufacturing cost", "To speed evaporation", "To avoid using water"], "To allow thorough, complete agitation of the ingredients"], ["What differs between 'addition of sucrose to a medicated liquid' and percolation (with an extractive) in terms of number of procedures?", ["Percolation with an extractive requires two separate procedures, while adding sucrose to a ready liquid requires one direct procedure", "Both require exactly three separate procedures", "Percolation is always faster than the other method", "There is no difference between them"], "Percolation with an extractive requires two separate procedures, while adding sucrose to a ready liquid requires one direct procedure"], ["Why does sorbitol need a concentration above 60% to become self-preserving, similar to sucrose at 60%?", ["Both concentrations lower water activity enough to prevent microbial growth, though sorbitol's threshold is slightly higher", "Sorbitol can never be self-preserving", "Sucrose at 60% is not actually self-preserving", "Sorbitol is more expensive than sucrose"], "Both concentrations lower water activity enough to prevent microbial growth, though sorbitol's threshold is slightly higher"], ["Which statement about heat-sensitive components in the hot process is correct?", ["They are added after the sugar dissolves, then the mixture is rapidly cooled", "They are always added together with the sugar from the start", "They can never be used in the hot process at all", "They are added only after complete cooling, with no urgency"], "They are added after the sugar dissolves, then the mixture is rapidly cooled"], ["Why can't alcohol alone (60 mL) be relied on as the preservative in the antihistamine syrup formula?", ["Its concentration (6%) is not sufficient alone, so a dedicated preservative (sodium benzoate) is added", "Alcohol is entirely forbidden in medicinal syrups", "Alcohol excessively raises viscosity", "Alcohol causes sucrose crystallization"], "Its concentration (6%) is not sufficient alone, so a dedicated preservative (sodium benzoate) is added"], ["What do anionic polymers (like sodium CMC) have in common regarding compatibility with cationic drugs and with alcohol/electrolytes?", ["Both cause instability of the dispersion or an unwanted reaction, making them shared cautionary points", "There is no connection between them at all", "Both increase the cationic drug's effectiveness", "Both improve solubility"], "Both cause instability of the dispersion or an unwanted reaction, making them shared cautionary points"], ["What is the shared role of 'boiled water' and 'a permitted preservative' in protecting a syrup?", ["Both are protective measures that substitute for autoclave sterilization, which damages syrup with heat", "Both increase syrup viscosity", "Both are used only in diabetic syrups", "There is no connection between them"], "Both are protective measures that substitute for autoclave sterilization, which damages syrup with heat"], ["Why is sorbitol particularly suitable for linctuses intended for diabetic patients?", ["It doesn't cause hyperglycemia or dental caries while maintaining the required viscous consistency", "It is cheaper than sucrose only", "It has no taste at all", "It treats cough directly, unrelated to sugar content"], "It doesn't cause hyperglycemia or dental caries while maintaining the required viscous consistency"], ["What is the difference in origin between stevia's sweetness degree (250) and neotame's (8000)?", ["Stevia is naturally derived, while neotame is a fully synthesized compound", "Both are naturally derived", "Both are fully synthesized", "There is no difference in origin"], "Stevia is naturally derived, while neotame is a fully synthesized compound"], ["What is the relationship between standing and filtering when removing unwanted tincture components?", ["Standing allows complete separation of water-insoluble components before effective filtering", "Filtering is unrelated to standing at all", "Standing increases solubility instead of causing separation", "Filtering increases viscosity"], "Standing allows complete separation of water-insoluble components before effective filtering"], ["Why is a hydroalcoholic solvent specifically used to percolate powdered ipecac?", ["The active alkaloids require this solvent type for efficient extraction", "Water alone is always sufficient", "Alcohol alone only inhibits microbial growth", "There is no specific chemical reason"], "The active alkaloids require this solvent type for efficient extraction"], ["What is the fundamental difference in purpose between linctuses and ordinary medicated syrups?", ["Linctuses are primarily meant for cough treatment via local soothing of mucous membranes", "There is no difference between them", "Linctuses never contain sugar or sorbitol", "Ordinary syrups are always more viscous than linctuses"], "Linctuses are primarily meant for cough treatment via local soothing of mucous membranes"], ["Why are both syrup (83 mL) and sorbitol solution (282 mL) used together in the antihistamine formula?", ["To balance traditional sweetness and body while reducing total sucrose content", "Because only one of them is water-soluble", "To increase alcohol concentration", "To avoid using any preservative"], "To balance traditional sweetness and body while reducing total sucrose content"], ["What is the difference between natural and semi-synthetic viscosity builders regarding chemical origin?", ["Natural ones are direct plant gums; semi-synthetic ones are chemically processed cellulose derivatives", "Both are fully chemically synthesized", "Both come from an animal source", "There is no difference in origin"], "Natural ones are direct plant gums; semi-synthetic ones are chemically processed cellulose derivatives"], ["Why do some syrups require more than one preparation method?", ["Because the choice depends on ingredient properties and pharmacist preference, not a strict rule", "Because the law requires two methods always", "Because every syrup needs autoclave sterilization", "Because sucrose always requires all four methods together"], "Because the choice depends on ingredient properties and pharmacist preference, not a strict rule"], ["What do glycyrrhiza syrup and cherry syrup have in common?", ["Both use a ready-made sweet liquid as vehicle instead of dissolving sucrose from scratch", "Both use percolation exclusively", "Neither contains any sugar", "Both are sugar-free diabetic syrups"], "Both use a ready-made sweet liquid as vehicle instead of dissolving sucrose from scratch"], ["What is the practical importance of a sweetener's numerical 'sweetness degree' (e.g., 500 for saccharin)?", ["It determines the actual amount of sweetener needed to match a given amount of sucrose's sweetness", "It's a theoretical number with no practical use", "It only determines the sweetener's color", "It only determines final packaging weight"], "It determines the actual amount of sweetener needed to match a given amount of sucrose's sweetness"], ["What is the relationship between 'limited free water in concentrated syrup' and slow dissolution of directly added solids?", ["The viscous nature and scarce free water slow the solid's distribution and dissolution", "There is no relationship at all", "Excess water in concentrated syrup is the cause", "Solids always dissolve quickly in any syrup"], "The viscous nature and scarce free water slow the solid's distribution and dissolution"], ["What is the best strategy for dissolving a solid agent before adding it to a viscous syrup?", ["Dissolve it first in a small amount of purified water, then incorporate it into the syrup", "Add it directly to the syrup with no preparation", "Only heat the syrup to a very high temperature", "Shake the syrup vigorously without pre-dissolving"], "Dissolve it first in a small amount of purified water, then incorporate it into the syrup"], ["What is the difference in purpose between using sorbitol in the diabetic (Rx) syrup versus the antihistamine syrup formula?", ["Sorbitol isn't explicitly listed in the first (sodium CMC is the builder used); it's a main sweet vehicle in the second", "Sorbitol is unused in both formulas", "Sorbitol is the sole preservative in both", "There is no functional difference"], "Sorbitol isn't explicitly listed in the first (sodium CMC is the builder used); it's a main sweet vehicle in the second"], ["What is the connection between 'coagulation from strong dehydrating agents' and 'incompatibility with excess alcohol'?", ["Both withdraw water around dispersed polymer particles, causing loss of stability via partially different mechanisms", "There is no connection between them", "Both increase polymer solubility", "Only semi-synthetic polymers are affected by either"], "Both withdraw water around dispersed polymer particles, causing loss of stability via partially different mechanisms"], ["What is alcohol's likely dual role in the antihistamine syrup formula?", ["A co-solvent that may also partially contribute to preservation", "A colorant only", "The primary viscosity builder", "A complete replacement for sucrose"], "A co-solvent that may also partially contribute to preservation"], ["Why is ipecac syrup preparation described as a 'composite' method combining percolation and direct addition?", ["It combines extracting the extractive by percolation, then adding glycerin and syrup directly to it", "It never uses percolation at all", "It relies solely on direct heating", "It relies solely on the cold agitation method"], "It combines extracting the extractive by percolation, then adding glycerin and syrup directly to it"], ["What is the practical difference between a substance being 'self-preserving' and needing an added preservative at a lower concentration?", ["High concentration lowers water activity enough to prevent microbial growth without additives; lower concentration needs a preservative", "There is no practical difference", "Added preservatives are used only in concentrated syrups", "Concentration is unrelated to self-preservation"], "High concentration lowers water activity enough to prevent microbial growth without additives; lower concentration needs a preservative"], ["What is the shared function between 'removing unwanted components by filtration' and 'choosing a drug-compatible viscosity builder'?", ["Both ensure the final formula's purity and compatibility — one is a post-hoc correction, the other proactive prevention", "There is no logical connection between them", "Both only increase production cost with no functional benefit", "Both occur only in the final manufacturing stage"], "Both ensure the final formula's purity and compatibility — one is a post-hoc correction, the other proactive prevention"]];
+const rawQuizL3 = [["Citric acid accelerates sucrose inversion during heating by:", ["Providing H+ ions that catalyze hydrolysis of sucrose into glucose and fructose", "Directly raising temperature without any chemical reaction", "Rapidly cooling the solution", "Forming a permanent covalent bond with sucrose"], "Providing H+ ions that catalyze hydrolysis of sucrose into glucose and fructose"], ["If a formula contains a cationic drug and sodium CMC as the viscosity builder, the expected problem is:", ["Ionic incompatibility that may cause precipitation or loss of drug activity", "A marked improvement in solubility", "An unexpected increase in sweetness", "No problem is expected at all"], "Ionic incompatibility that may cause precipitation or loss of drug activity"], ["To resolve the sodium CMC (anionic) / cationic drug incompatibility, the most suitable alternative is:", ["A non-ionic builder like HPMC or a polyol like sorbitol", "Increasing the sodium CMC concentration further", "Adding more of the cationic drug", "Heating the solution to a higher temperature"], "A non-ionic builder like HPMC or a polyol like sorbitol"], ["Comparing sorbitol alone versus a sorbitol + saccharin blend as a sweetening source shows that:", ["The blend balances body and sweetness but may carry saccharin's bitter aftertaste", "Sorbitol alone matches sucrose's sweetness exactly", "Saccharin greatly increases viscosity", "There is no practical difference between the two options"], "The blend balances body and sweetness but may carry saccharin's bitter aftertaste"], ["The approximate rate of increase in sucrose solubility per 10°C between 50°C and 90°C is:", ["About 0.4 g/mL", "About 2.0 g/mL", "About 0.05 g/mL", "About 5.0 g/mL"], "About 0.4 g/mL"], ["Percolating the medicinal source (rather than sucrose itself) is preferred when:", ["The active substance resides in a crude material requiring selective extraction with a suitable solvent", "The goal is simply preparing a plain syrup with no medicinal component", "No preservative is available", "Sucrose is unavailable in the market"], "The active substance resides in a crude material requiring selective extraction with a suitable solvent"], ["The dosing sensitivity of ipecac syrup (15 mL) as an emetic relates to:", ["The potency of the active alkaloids and the risk of toxicity if the dose is exceeded", "The complete absence of any risk with this syrup", "Its total ineffectiveness at any dose", "Its sole use as a colorant"], "The potency of the active alkaloids and the risk of toxicity if the dose is exceeded"], ["Adding heat-sensitive components after (not with) sugar dissolution aims kinetically to:", ["Minimize their exposure time to high heat, preserving potency and concentration", "Deliberately increase total heating time", "Accelerate sucrose inversion", "Reduce the formula's overall solubility"], "Minimize their exposure time to high heat, preserving potency and concentration"], ["Sorbitol is classified under 'polyols' rather than 'natural' or 'semi-synthetic' builders because:", ["It originates from chemical hydrogenation of glucose, giving it a defined polyol structure rather than a natural polysaccharide or modified-cellulose derivative", "It is a direct derivative of tragacanth", "It is identical to sodium CMC under another name", "There is no clear scientific reason for this classification"], "It originates from chemical hydrogenation of glucose, giving it a defined polyol structure rather than a natural polysaccharide or modified-cellulose derivative"], ["The most suitable strategy for a long-shelf-life syrup per the lecture is:", ["Combining boiled water with a permitted preservative regardless of the dissolution method used", "Relying solely on autoclave sterilization", "Completely avoiding any preservative", "Always using maximum heat to ensure sterilization"], "Combining boiled water with a permitted preservative regardless of the dissolution method used"], ["The logical links between sorbitol's thirteen listed properties make it:", ["A functionally, clinically, and manufacturing-integrated choice, not just a sweetness substitute", "A hazardous substance to always avoid", "A substitute for purified water only", "A substance unrelated to diabetic patients"], "A functionally, clinically, and manufacturing-integrated choice, not just a sweetness substitute"], ["To convert active medicinal components soluble only in alcohol into an aqueous syrup, the first logical step is:", ["Finding a way to render them water-soluble rather than removing them by filtration", "Removing them immediately by filtration as unwanted", "Ignoring them entirely from the formula", "Heating them intensely to chemically convert them into sucrose"], "Finding a way to render them water-soluble rather than removing them by filtration"], ["The similarity between 'self-preservation' in sucrose at 60% and 'no preservative needed' for sorbitol is due to:", ["A shared physicochemical principle: reduced water activity at high concentration", "Pure numerical coincidence with no chemical link", "Sucrose and sorbitol being the identical chemical substance", "No relationship between the two cases"], "A shared physicochemical principle: reduced water activity at high concentration"], ["For a formula requiring heat processing, the more suitable sweetener between aspartame and acesulfame-K (both 200x) is:", ["Acesulfame-K, because it is heat stable unlike aspartame", "Aspartame, because it is cheaper only", "Both are equally suitable thermally", "Neither can be used in heat-processed formulas"], "Acesulfame-K, because it is heat stable unlike aspartame"], ["Using sodium CMC as the sole viscosity builder in a high-alcohol, high-electrolyte formula may lead to:", ["Polymer precipitation or loss of viscosity due to incompatibility", "Markedly improved stability", "Increased compatibility with the cationic drug", "No negative effect at all"], "Polymer precipitation or loss of viscosity due to incompatibility"], ["The antihistamine syrup formula (glycerin + syrup + sorbitol + alcohol + sodium benzoate) reflects the principle of:", ["Combining multiple systems to balance sweetness, body, stability, and drug compatibility", "Relying entirely on a single system (sucrose)", "Excluding all sweeteners completely", "Using alcohol alone with no sweetness"], "Combining multiple systems to balance sweetness, body, stability, and drug compatibility"], ["The fundamental difference between chemical 'sucrose inversion' and the 'crystallization' sorbitol prevents is:", ["Inversion is a chemical hydrolysis, while crystallization is a physical state change of sucrose", "Both are exactly the same chemical reaction", "Crystallization is purely chemical and unrelated to heat", "Inversion is a purely physical change"], "Inversion is a chemical hydrolysis, while crystallization is a physical state change of sucrose"], ["A diabetic formula with a cationic drug, an anionic builder, and a heat-unstable sweetener can fail in three independent ways because:", ["Each component carries a separate compatibility or stability risk that may interact with the others during manufacturing", "The only problem is always color", "There is no real risk in this scenario", "The only problem is cost"], "Each component carries a separate compatibility or stability risk that may interact with the others during manufacturing"], ["Balancing viscosity in a multi-component diabetic syrup is harder than balancing sweetness because:", ["Viscosity is affected by multiple interacting factors (builder type, compatibility, concentration), while sweetness is adjusted via one sweetener's amount", "Sweetness is always harder to balance than viscosity", "Viscosity is unaffected by any external factor", "There is no difference in difficulty between adjusting either"], "Viscosity is affected by multiple interacting factors (builder type, compatibility, concentration), while sweetness is adjusted via one sweetener's amount"], ["A strategy for preparing a medicated syrup with a heat-sensitive component from an alcoholic tincture with impurities begins with:", ["Mixing the tincture with water and letting it stand before filtering to obtain a pure filtrate", "Heating the tincture directly with no processing", "Adding sucrose directly to the crude tincture", "Skipping the impurity-removal step entirely"], "Mixing the tincture with water and letting it stand before filtering to obtain a pure filtrate"], ["The causal relationship between 'limited free water in concentrated syrup' and 'self-preservation at 60%' is:", ["Both result from high concentration strongly binding water, reducing free water available for dissolution and for microbial growth alike", "There is no relationship between the two phenomena", "Self-preservation increases the amount of free water available", "Limited water only occurs at low concentration"], "Both result from high concentration strongly binding water, reducing free water available for dissolution and for microbial growth alike"], ["Comparing risks of aspartame vs. sucralose in a heat-prepared, long-stored diabetic syrup shows that:", ["Aspartame carries a higher risk specifically during heat preparation due to its instability in hot solution", "Sucralose is entirely unsuitable for heat preparation", "Aspartame is more heat-stable than sucralose", "There is no risk difference between the two sweeteners"], "Aspartame carries a higher risk specifically during heat preparation due to its instability in hot solution"], ["Alcohol compatibility is a decisive test point between polymers and polyols because:", ["Polymers are incompatible with excess alcohol while polyols (like sorbitol, actually used with alcohol) carry no such stated restriction", "Both are equally incompatible with alcohol", "Polyols are always worse with alcohol than polymers", "Alcohol is unrelated to either category"], "Polymers are incompatible with excess alcohol while polyols (like sorbitol, actually used with alcohol) carry no such stated restriction"], ["The directional difference between ipecac extraction and tincture impurity removal is:", ["The first brings the active substance into solution (extraction); the second pushes an unwanted component out (precipitation)", "Both processes go in exactly the same direction (extraction only)", "Both push the active substance out of solution", "There is no difference between the two processes"], "The first brings the active substance into solution (extraction); the second pushes an unwanted component out (precipitation)"], ["Comparing natural and synthetic sweetener tables shows that:", ["There is no simple direct relationship between a sweetener being natural/synthetic and its sweetness degree", "All natural sweeteners are always sweeter than all synthetic ones", "All synthetic sweeteners are always sweeter than all natural ones", "Sweetness degree is fixed at 100 for every sweetener"], "There is no simple direct relationship between a sweetener being natural/synthetic and its sweetness degree"], ["For a sugar-free linctus for a diabetic patient with a saccharin sensitivity, the most suitable solution is:", ["Replace sucrose with sorbitol and use an alternative sweetener like stevia or sucralose instead of saccharin", "Continue using saccharin despite the sensitivity", "Use ordinary sucrose with no modification", "Remove any sweetener entirely"], "Replace sucrose with sorbitol and use an alternative sweetener like stevia or sucralose instead of saccharin"], ["The step sequence in 'addition of sucrose to a prepared medicated liquid' reflects the principle of:", ["Separating purification of the medicinal source first, then building sweet body afterward", "Merging all steps at once with no order", "Ignoring purification of the medicinal source entirely", "Adding sucrose before any processing of the medicated liquid"], "Separating purification of the medicinal source first, then building sweet body afterward"], ["The three most important criteria for comparing hot, cold, and percolation preparation methods for a given component are:", ["Chemical stability, final color/clarity, and time/effort versus required stability", "Color alone regardless of any other factor", "Price alone regardless of quality", "Final packaging size only"], "Chemical stability, final color/clarity, and time/effort versus required stability"], ["Choosing 'medium-viscosity' sodium CMC specifically (not high or low) in the diabetic syrup achieves:", ["A balance between sufficient body and ease of use/patient acceptance", "The highest possible viscosity regardless of acceptance", "The lowest cost only, with no functional consideration", "The same effect as any other viscosity grade"], "A balance between sufficient body and ease of use/patient acceptance"], ["Comparing tragacanth and sodium CMC risks in a high-electrolyte formula shows that:", ["Both are listed together as incompatible with excess electrolytes under the same cautionary rule", "Tragacanth is fully compatible with excess electrolytes", "Only sodium CMC is incompatible with electrolytes", "Electrolytes are unrelated to either substance"], "Both are listed together as incompatible with excess electrolytes under the same cautionary rule"], ["Viewing 'self-preservation' as an economic concept (not just pharmaceutical) is because it:", ["Eliminates the need to purchase and add a separate preservative, reducing cost and manufacturing complexity", "Always increases cost due to high sugar concentration", "Is unrelated to cost at all", "Always requires more expensive manufacturing equipment"], "Eliminates the need to purchase and add a separate preservative, reducing cost and manufacturing complexity"], ["Neglecting the 'final volume adjustment with water' step after cooling in the hot method leads to:", ["A higher-than-planned concentration of active ingredients due to water lost by evaporation during heating", "A lower concentration of active ingredients always", "No effect on final concentration at all", "A larger-than-required final volume"], "A higher-than-planned concentration of active ingredients due to water lost by evaporation during heating"], ["The shared goal between 'a larger vessel' in the cold method and 'volume adjustment with water' in the hot method is:", ["Ensuring the final volume and concentration match what's intended, despite differing potential error sources", "Increasing preparation speed in both methods", "Reducing the amount of sucrose used", "Avoiding any preservative use"], "Ensuring the final volume and concentration match what's intended, despite differing potential error sources"], ["The statement 'every syrup with a heat-sensitive component must be prepared only by the cold method' is:", ["Inaccurate, since the hot method can be adapted via late addition and rapid cooling", "Completely accurate with no exceptions", "Unrelated to the lecture entirely", "Accurate only for alcoholic components"], "Inaccurate, since the hot method can be adapted via late addition and rapid cooling"], ["Choosing xylitol (sweetness 1.0) over sorbitol (sweetness 0.6) might be preferred when:", ["A sweetness closer to sucrose is wanted, needing less additional sweetener", "Additional documented properties (reduced crystallization, cap-sticking prevention) not noted for xylitol are wanted", "Maximum possible viscosity alone is desired", "There is no practical difference between them"], "A sweetness closer to sucrose is wanted, needing less additional sweetener"], ["The presence of sodium benzoate in a formula already containing 60 mL of alcohol shows that:", ["The alcohol concentration (6%) alone is insufficient to ensure complete long-term microbial preservation", "Alcohol is entirely forbidden in this formula", "Sodium benzoate is unnecessary given the alcohol", "Alcohol alone always sufficiently preserves the syrup"], "The alcohol concentration (6%) alone is insufficient to ensure complete long-term microbial preservation"], ["Acacia and tragacanth being both 'natural' but with entirely different sugar sources shows that:", ["'Natural' as a broad classification doesn't imply close similarity in precise chemical composition or functional behavior", "All natural gums are chemically identical", "Acacia and tragacanth have exactly the same constituent sugars", "The natural classification precisely determines viscosity"], "'Natural' as a broad classification doesn't imply close similarity in precise chemical composition or functional behavior"], ["The risk of autoclave sterilization for syrups is mainly tied to:", ["Severe heat exposure itself, not only the presence of explicitly added acid", "The presence of explicitly added acid only", "Low temperature only", "The syrup's initial color only"], "Severe heat exposure itself, not only the presence of explicitly added acid"], ["The link between 'linctuses as a local soothing treatment' and 'viscosity as a functional property' is explained by:", ["The viscous consistency prolongs contact time with the inflamed mucous membrane, enhancing the local soothing effect", "Viscosity is used only to improve appearance with no therapeutic function", "Viscosity is unrelated to contact time with the mucous membrane", "Linctuses require no particular viscosity at all"], "The viscous consistency prolongs contact time with the inflamed mucous membrane, enhancing the local soothing effect"], ["The decision of 'what to percolate' (sucrose or the drug source) in the percolation method is a key branch point because it:", ["Determines the number of steps and the solvents/equipment needed for the entire process", "Has no effect at all on the rest of the preparation steps", "Only determines the final product's color", "Applies only to the antihistamine syrup"], "Determines the number of steps and the solvents/equipment needed for the entire process"]];
+
+function shuffleArr(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function buildQuiz(raw){ return raw.map(q=>({q:q[0],options:shuffleArr(q[1].slice()),correct:q[2]})); }
+
+let qLevel=1;
+let quiz = buildQuiz(rawQuizL1);
+let qIndex=0, qScore=0, qAnswered=false;
+
+function qLevelRaw(lvl){
+  if(lvl===1) return rawQuizL1;
+  if(lvl===2) return rawQuizL2;
+  return rawQuizL3;
+}
+
+function renderQuiz(){
+  const box=document.getElementById('quizCard');
+  document.getElementById('qCount').textContent='Question '+(qIndex+1)+' of '+quiz.length;
+  document.getElementById('qScore').textContent='Score: '+qScore;
+  if(qIndex>=quiz.length){
+    box.innerHTML='<div class="quiz-done"><div class="score">'+qScore+' / '+quiz.length+'</div><p>Quiz complete.</p><button class="btn" id="qRestart">Restart quiz</button></div>';
+    document.getElementById('qRestart').addEventListener('click',()=>{
+      qIndex=0; qScore=0;
+      quiz.forEach(q=>shuffleArr(q.options));
+      renderQuiz();
+    });
+    return;
+  }
+  const item=quiz[qIndex];
+  qAnswered=false;
+  let html='<h3>'+item.q+'</h3>';
+  item.options.forEach(opt=>{
+    html+='<button class="opt" data-val="'+opt.replace(/"/g,'&quot;')+'">'+opt+'</button>';
+  });
+  html+='<div class="quiz-next"><button class="btn ghost" id="qNext" style="display:none;">Next question →</button></div>';
+  box.innerHTML=html;
+  box.querySelectorAll('.opt').forEach(b=>{
+    b.addEventListener('click',()=>{
+      if(qAnswered) return;
+      qAnswered=true;
+      const val=b.dataset.val;
+      box.querySelectorAll('.opt').forEach(o=>{
+        o.setAttribute('disabled','true');
+        if(o.dataset.val===item.correct) o.classList.add('correct');
+        else if(o===b) o.classList.add('wrong');
+      });
+      if(val===item.correct) qScore++;
+      document.getElementById('qScore').textContent='Score: '+qScore;
+      document.getElementById('qNext').style.display='inline-block';
+    });
+  });
+  document.getElementById('qNext').addEventListener('click',()=>{
+    qIndex++; renderQuiz();
+  });
+}
+document.querySelectorAll('#qLevelRow .level-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#qLevelRow .level-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    qLevel=parseInt(btn.dataset.lvl,10);
+    quiz=buildQuiz(qLevelRaw(qLevel));
+    qIndex=0; qScore=0;
+    renderQuiz();
+  });
+});
+renderQuiz();
+</script>
+</body>
+</html>
